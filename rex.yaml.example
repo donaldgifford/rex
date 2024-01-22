@@ -1,0 +1,8 @@
+adr:
+  path: "docs/adr/"
+  index_page: "README.md"
+  add_to_index: true # on rex create, a new record will be added to the index page
+templates:
+  path: "templates/"
+  adr:
+    default: "adr.tmpl"
