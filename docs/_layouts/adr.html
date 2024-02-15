@@ -3,13 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <title>{{ page.title }}</title>
-    <link rel="stylesheet" href="/css/style.css" />
-    {% seo %}
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
   </head>
   <body>
     <nav>
-      <a href="/rex">Home</a>
+      <a href="/rex/">Home</a>
     </nav>
     <h1>{{ page.title }}</h1>
     <section>{{ content }}</section>
