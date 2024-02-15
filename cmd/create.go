@@ -10,7 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var title string
+var (
+	title  string
+	author string
+)
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
@@ -18,12 +21,12 @@ var createCmd = &cobra.Command{
 	Short: "Create a new ADR record",
 	Long: `Create a new ADR in the path specifed in the .rex.yaml config. For example:
 
-  rex create -t "My ADR Title"
+  rex create -t "My ADR Title" -a "Donald Gifford"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		myADR := src.ADR{
 			Title:  title,
-			Author: "",
+			Author: author,
 			Status: "Draft",
 			Date:   time.Now().Format(time.DateOnly),
 		}
@@ -44,4 +47,5 @@ func init() {
 	// is called directly, e.g.:
 	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	createCmd.Flags().StringVarP(&title, "title", "t", "", "Title for ADR.")
+	createCmd.Flags().StringVarP(&author, "author", "a", "", "Author for ADR.")
 }

@@ -59,9 +59,9 @@ func createADRDefaultTemplate(cwd string, templatesPath string) {
 	fmt.Println(fileName)
 	d := `# {{ .Title }}
 
-Status: {{ .Status }}
-Author: {{ .Author }}
-Date: {{ .Date }}
+| Status | Author         | Date       |
+| ------ | -------------- | ---------- |
+| {{ .Status }} | {{ .Author }} | {{ .Date }} |
 
 ## Context and Problem Statement
 
