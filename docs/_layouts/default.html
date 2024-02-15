@@ -21,9 +21,9 @@
   <!--     - <time datetime="{{ adr.date | date: "%Y-%m-%d" }}">{{ adr.date | date_to_long_string }}</time> -->
   <!--   </li> -->
   <!-- {% endfor %} -->
-    {% assign posts = site.posts %}
-      {% for post in posts %}
-    <li>  title: {{post.title}} </li>
+    {% assign adrs = site.adr %}
+      {% for adr in adrs %}
+        <li>  title: {{adr.title}} </li>
     {% endfor %}
 </ul>
 
