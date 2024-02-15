@@ -4,6 +4,12 @@ layout: default
 
 # Rex
 
-## Stuff
+## ADRs
 
-[ADRs](/docs/adr/0001-rex.md)
+| Title | Link |
+| ----- | ---- |{% assign pages = site.pages -%}
+{% for page in pages %}
+{% if page.title -%}
+|{{ page.title }} |[Click Here]({{ page.url }}) |
+{% endif %}
+{% endfor -%}
