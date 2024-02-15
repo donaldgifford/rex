@@ -10,6 +10,6 @@ layout: default
 | ----- | ---- |{% assign pages = site.pages -%}
 {% for page in pages %}
 {% if page.path contains 'adr' -%}
-|{{ page.title }} |[Click Here]({{ page.url }}) |
+|{{ page.title }} |[Click Here]({{ page.url | relative_url }}) |
 {% endif %}
 {% endfor -%}
