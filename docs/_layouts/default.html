@@ -13,14 +13,18 @@
     {{ content }}
 
       <ul>
-  {% for adr in site.posts %}
-    <li>
-      <a href="{{ adr.url }}">
-        {{ adr.title }}
-      </a>
-      - <time datetime="{{ adr.date | date: "%Y-%m-%d" }}">{{ adr.date | date_to_long_string }}</time>
-    </li>
-  {% endfor %}
+  <!-- {% for adr in site.posts %} -->
+  <!--   <li> -->
+  <!--     <a href="{{ adr.url }}"> -->
+  <!--       {{ adr.title }} -->
+  <!--     </a> -->
+  <!--     - <time datetime="{{ adr.date | date: "%Y-%m-%d" }}">{{ adr.date | date_to_long_string }}</time> -->
+  <!--   </li> -->
+  <!-- {% endfor %} -->
+    {% assign posts = site.posts %}
+      {% for post in posts %}
+    <li>  title: {{post.title}} </li>
+    {% endfor %}
 </ul>
 
     {% if site.github.private != true and site.github.license %}
