@@ -6,10 +6,11 @@ layout: default
 
 ## ADRs
 
+{% assign pages = site.pages -%}
+
 | Title | Link |
-| ----- | ---- |{% assign pages = site.pages -%}
-{% for page in pages %}
-{% if page.path contains 'adr' -%}
+| ----- | ---- |{% for page in pages -%}
+{% if page.path contains 'adr' %}
 |{{ page.title }} |[Click Here]({{ page.url | relative_url }}) |
-{% endif %}
-{% endfor -%}
+{%- endif %}
+{%- endfor -%}
