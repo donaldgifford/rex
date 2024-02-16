@@ -6,3 +6,11 @@ templates:
   path: "templates/"
   adr:
     default: "adr.tmpl"
+enable_github_pages: true
+pages:
+  index: "index.md"
+  web:
+    config: "_config.yml"
+    layout:
+      adr: "adr.html"
+      default: "default.html"

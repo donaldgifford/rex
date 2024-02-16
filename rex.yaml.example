@@ -6,3 +6,4 @@ templates:
   path: "templates/"
   adr:
     default: "adr.tmpl"
+enable_github_pages: true
