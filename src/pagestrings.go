@@ -1,8 +1,10 @@
 package src
 
-import "github.com/spf13/viper"
+import "strings"
 
-var pagesIndex = RexFile{viper.GetString("pages.index"), `---
+var (
+	pagesIndexConfig  string = "pages.index"
+	pagesIndexContent string = `---
 layout: default
 ---
 
@@ -17,9 +19,12 @@ layout: default
 {% if page.path contains 'adr' %}
 |{{ page.title }} |[Click Here]({{ page.url | relative_url }}) |
 {%- endif %}
-{%- endfor -%}`}
+{%- endfor -%}`
+)
 
-var pagesDefaultADR = RexFile{viper.GetString("templates.default.adr"), `---
+var (
+	pagesDefaultADRConfig  string = "templates.adr.default"
+	pagesDefaultADRContent string = `---
 permalink: /:path/:basename:output_ext
 title: {{ .WebTitle }}
 layout: adr
@@ -41,11 +46,22 @@ layout: adr
 
 
 ## Decision Outcome
-`}
+`
+)
 
-var pagesConfig = RexFile{viper.GetString("pages.web.config"), `baseurl: "/rex"`}
+func setConfig(cwd string) string {
+	ts := strings.Split(cwd, "/")
+	base := ts[len(ts)-1]
+	return `baseurl: "/` + base + `"`
+}
 
-var pagesWebLayoutAdr = RexFile{viper.GetString("pages.web.layout.adr"), `<!doctype html>
+var pagesWebConfig string = "pages.web.config"
+
+// pagesWebConfigContent string =
+
+var (
+	pagesWebLayoutAdr        string = "pages.web.layout.adr"
+	pagesWebLayoutAdrContent string = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -65,9 +81,12 @@ var pagesWebLayoutAdr = RexFile{viper.GetString("pages.web.layout.adr"), `<!doct
       <!-- <footer>&copy; to me</footer> -->
     </div>
   </body>
-</html>`}
+</html>`
+)
 
-var pagesWebLayoutDefault = RexFile{viper.GetString("pages.web.layout.default"), `<!DOCTYPE html>
+var (
+	pagesWebLayoutDefault        string = "pages.web.layout.default"
+	pagesWebLayoutDefaultContent string = `<!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
 <head>
     <meta charset="UTF-8">
@@ -82,4 +101,19 @@ var pagesWebLayoutDefault = RexFile{viper.GetString("pages.web.layout.default"),
 
 </div>
 </body>
-</html>`}
+</html>`
+)
+
+var (
+	extraPagesInstallConfig string = "extra_pages.install"
+	extraPagesUsageConfig   string = "extra_pages.usage"
+	extraPagesContent       string = `---
+layout: default
+---
+
+# Title
+
+## Subtitle
+
+`
+)

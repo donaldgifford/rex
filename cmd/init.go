@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var forceOverwrite bool
+
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
@@ -20,7 +22,13 @@ var initCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("init called")
-		src.Init()
+		if forceOverwrite {
+			fmt.Println("Overwriting existing files")
+			src.Init(forceOverwrite)
+		} else {
+			fmt.Println("Creating new files")
+			src.Init(forceOverwrite)
+		}
 	},
 }
 
@@ -36,4 +44,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	initCmd.Flags().BoolVarP(&forceOverwrite, "force", "f", false, "Overwrite existing files create with command")
 }

@@ -7,3 +7,14 @@ templates:
   adr:
     default: "adr.tmpl"
 enable_github_pages: true
+pages:
+  index: "index.md"
+  web:
+    config: "_config.yml"
+    layout:
+      adr: "adr.html"
+      default: "default.html"
+extras: true
+extra_pages:
+  install: install.md
+  usage: usage.md

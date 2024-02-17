@@ -14,3 +14,7 @@ pages:
     layout:
       adr: "adr.html"
       default: "default.html"
+extras: true
+extra_pages:
+  install: install.md
+  usage: usage.md

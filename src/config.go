@@ -12,13 +12,16 @@ import (
 type Config interface {
 	Init()
 	createDir(string)
-	generateFile(string, RexFile)
+	generateFile(string, string, string)
 	generateADR()
 	check(error)
+	overwrite(bool)
+	extraPages()
 }
 
-func Init() {
-	config, err := InitConfig()
+func Init(force bool) {
+	checkConfigFileExists()
+	config, err := InitConfig(force)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,14 +31,15 @@ func Init() {
 
 func checkConfigFileExists() {
 	cwd := getCwd()
-	file, err := os.Open(cwd + ".rex.yaml")
+	fmt.Printf("CWD: %s\n", cwd)
+	file, err := os.Open(cwd + "/.rex.yaml")
 	if errors.Is(err, os.ErrNotExist) {
 		fmt.Println("No .rex.yaml file exists. Creating a new one...")
 		createDefaultConfigFile(cwd)
 	} else if err != nil {
 		fmt.Println("Error opening .rex.yaml file: ", err)
 	} else {
-		fmt.Printf("File exists: &s\n", file.Name())
+		fmt.Printf("File exists: %s\n", file.Name())
 	}
 }
 
@@ -51,18 +55,20 @@ func getCwd() string {
 	return cwd
 }
 
-func InitConfig() (Config, error) {
+func InitConfig(force bool) (Config, error) {
 	if viper.GetBool("enable_github_pages") {
 		return &ConfigGithubPages{
 			adrPath:       viper.GetString("adr.path"),
 			templatesPath: viper.GetString("templates.path"),
 			cwd:           getCwd(),
+			force:         force,
 		}, nil
 	} else {
 		return &ConfigAdr{
 			adrPath:       viper.GetString("adr.path"),
-			templatesPath: viper.GetString("templats.path"),
+			templatesPath: viper.GetString("templates.path"),
 			cwd:           getCwd(),
+			force:         force,
 		}, nil
 	}
 }
@@ -84,7 +90,14 @@ templates:
   path: "templates/"
   adr:
     default: "adr.tmpl"
-enable_github_pages: false`
+enable_github_pages: false
+pages:
+  index: "index.md"
+  web:
+    config: "_config.yml"
+    layout:
+      adr: "adr.html"
+      default: "default.html"`
 	rc := []byte(rexConfig)
 	fileName := cwd + "/" + rexConfigFile
 	fmt.Println(fileName)

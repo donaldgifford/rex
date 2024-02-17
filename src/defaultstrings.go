@@ -3,15 +3,32 @@ package src
 import "github.com/spf13/viper"
 
 type RexFile struct {
-	name    string
-	content string
+	fileName string
+	content  string
 }
 
-var defaultAdrTemplate = RexFile{viper.GetString("template.adr.default"), `# {{ .Title }}
+func createRexFile(configString string, content string) RexFile {
+	f := viper.GetString(configString)
+	return RexFile{
+		fileName: f,
+		content:  content,
+	}
+}
+
+func createExtrasRexFile(name string, content string) RexFile {
+	return RexFile{
+		fileName: name,
+		content:  content,
+	}
+}
+
+var (
+	configDefaultAdrTemplate  string = "templates.adr.default"
+	defaultAdrTemplateContent string = `# {{ .ADR.Title }}
 
 | Status | Author         | Date       |
 | ------ | -------------- | ---------- |
-| {{ .Status }} | {{ .Author }} | {{ .Date }} |
+| {{ .ADR.Status }} | {{ .ADR.Author }} | {{ .ADR.Date }} |
 
 ## Context and Problem Statement
 
@@ -22,4 +39,6 @@ var defaultAdrTemplate = RexFile{viper.GetString("template.adr.default"), `# {{ 
 
 
 ## Decision Outcome
-  `}
+
+  `
+)

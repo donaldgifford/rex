@@ -22,3 +22,7 @@ go.work
 
 # stuff in docs 
 docs/_site
+
+backup/
+
+
