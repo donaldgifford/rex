@@ -19,3 +19,10 @@
 
 # Go workspace file
 go.work
+
+# stuff in docs 
+docs/_site
+
+backup/
+
+

@@ -22,6 +22,11 @@ type ADR struct {
 	Date   string
 }
 
+type WebADR struct {
+	ADR      ADR
+	WebTitle string
+}
+
 func CreateADR(adr ADR) {
 	// docs/adr/
 	adrPath := viper.GetString("adr.path")
@@ -46,7 +51,9 @@ func CreateADR(adr ADR) {
 		log.Fatal(err)
 	}
 
-	err = tmpl.Execute(f, adr)
+	webTitle := fmt.Sprintf("%s-%s", id, strippedTitle)
+
+	err = tmpl.Execute(f, WebADR{ADR: adr, WebTitle: webTitle})
 	if err != nil {
 		log.Fatal(err)
 	}
