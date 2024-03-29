@@ -16,3 +16,7 @@ All of them are uniquely built to satisfy the needs of how they want to use ADRs
 Everything is configurable using the the `.rex.yaml` config file.
 
 This repo dogfoods using `rex` with all features enabled. The Github Page generated can be found here: [Rex Github Page](https://donaldgifford.github.io/rex)
+
+### Install
+
+`go install github.com/donaldgifford/rex@latest` or whatever version you want to use.
