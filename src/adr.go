@@ -84,6 +84,7 @@ func (c *ConfigAdr) generateADR() {
 
 func (c *ConfigAdr) check(e error) {
 	if e != nil {
+		fmt.Printf("Error: %s", e.Error())
 		panic(e)
 	}
 }
