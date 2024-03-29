@@ -51,12 +51,20 @@ func CreateADR(adr ADR) {
 		log.Fatal(err)
 	}
 
-	webTitle := fmt.Sprintf("%s-%s", id, strippedTitle)
+	if viper.GetBool("enable_github_pages") {
+		webTitle := fmt.Sprintf("%s-%s", id, strippedTitle)
 
-	err = tmpl.Execute(f, WebADR{ADR: adr, WebTitle: webTitle})
-	if err != nil {
-		log.Fatal(err)
+		err = tmpl.Execute(f, WebADR{ADR: adr, WebTitle: webTitle})
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		err = tmpl.Execute(f, adr)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
+
 	err = f.Close()
 	if err != nil {
 		log.Fatal(err)
