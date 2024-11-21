@@ -19,10 +19,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"fmt"
 
-func main() {
-	cmd.Execute()
+	"github.com/spf13/cobra"
+)
+
+// configCreateCmd represents the configCreate command
+var configCreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a rex.yaml config file",
+	Long: `Create a default rex.yaml config file. For example:
+
+rex config create
+
+default config file created in the current directory. Ideally, you put it in 
+your project root level directory. Creates .rex.yaml file.`,
+
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("configCreate called")
+	},
+}
+
+func init() {
+	configCmd.AddCommand(configCreateCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// configCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// configCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

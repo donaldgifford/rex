@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford
+Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import (
 
 var (
 	cfgFile string
-	version = "v0.0.3-beta"
+	version = "0.0.1"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -39,8 +39,13 @@ var rootCmd = &cobra.Command{
 	Use:     "rex",
 	Version: version,
 	Short:   "Cli tool for managing ADR's",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:`,
+	Long: `Rex is a CLI tool for managing ADR's inside a codebase. It attempts to 
+solve some issues with other ADR tooling. For example:
+
+Primarily it creates a default to start from for generating markdown files to use
+as starting points for ADR. It also allows for you to change those templates as 
+needed. Lastly, it can generate html from the templates to be hosted on something
+like Github Pages, helping with overall documentation workflows.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -62,7 +67,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.rex.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $CWD/.rex.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -75,14 +80,11 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		// home, err := os.UserHomeDir()
-		// Find cwd
+		// Get current working directory
 		cwd, err := os.Getwd()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".rex" (without extension).
-		// viper.AddConfigPath(home)
+		// Search config in current directory with name ".rex" (without extension).
 		viper.AddConfigPath(cwd)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".rex")
@@ -90,8 +92,9 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	// if no config found, exit 1
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Fprintln(os.Stderr, "Config file not found, `run rex config create` to generate one", viper.ConfigFileUsed())
+		os.Exit(1)
 	}
 }

@@ -27,30 +27,52 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initialize a new ADR structure in the current project directory",
-	Long: `This command creates a new ADR structure in your current project directory. 
+var (
+	records int
+	filter  string
+	adrType string
+)
 
-It will use the .rex.yaml file for it's init settings. If there is not a .rex.yaml
-file in the project, it will create one.`,
+// adrListCmd represents the adrList command
+var adrListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List ADR's",
+	Long: `List the ADR's in console. For example:
 
+Return list in JSON format:
+rex adr list -t json 
+
+Return list in markdown table:
+rex adr list -t md
+
+Return oldest 5 records:
+rex adr list -r 5 -f oldest
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		fmt.Println("adrList called")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	adrCmd.AddCommand(adrListCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// adrListCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// adrListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	adrListCmd.Flags().IntVarP(&records, "records", "r", 20, "Number of records returned")
+
+	adrListCmd.Flags().StringVarP(&filter, "filter", "f", "", "Filter records - oldest, newest")
+	adrListCmd.Flags().StringVarP(&adrType, "type", "t", "", "Output type - json, md")
+
+	// TODO: eventually add in a sort or filter to return newest, oldest, or by ref number
 }

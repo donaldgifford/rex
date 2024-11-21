@@ -19,10 +19,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"fmt"
 
-func main() {
-	cmd.Execute()
+	"github.com/spf13/cobra"
+)
+
+var (
+	id        int
+	adrOutput string
+)
+
+// adrViewCmd represents the adrView command
+var adrViewCmd = &cobra.Command{
+	Use:   "view",
+	Short: "View an ADR",
+	Long: `View an ADR from the CLI. For example:
+
+View ADR 1 in json format:
+rex adr view -i 1 -t json
+
+View ADR 1 in markdown format:
+rex adr view -i 1 -t md 
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("adrView called")
+	},
+}
+
+func init() {
+	adrCmd.AddCommand(adrViewCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// adrViewCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// adrViewCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	adrViewCmd.Flags().StringVarP(&adrOutput, "output", "o", "", "Output type: json, md")
+	adrViewCmd.Flags().IntVarP(&id, "id", "i", 1, "ADR id number")
 }
