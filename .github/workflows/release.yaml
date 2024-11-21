@@ -19,10 +19,19 @@ jobs:
             goos: darwin
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set App version
+        run: echo APP_VERSION=$(echo ${GITHUB_REF} | rev | cut -d'/' -f 1 | rev ) >> ${GITHUB_ENV}
+
+      - name: Environment Printer
+        uses: managedkaos/print-env@v1.0
+
       - uses: wangyoucao577/go-release-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
           binary_name: "rex"
+          build_flags: -v
+          ldflags: -X "github.com/donaldgifford/rex/cmd.version=${{ env.APP_VERSION }}"
           extra_files: LICENSE README.md
