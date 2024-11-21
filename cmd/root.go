@@ -29,12 +29,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	version = "v0.0.3-beta"
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "rex",
-	Short: "Cli tool for managing ADR's",
+	Use:     "rex",
+	Version: version,
+	Short:   "Cli tool for managing ADR's",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:`,
 	// Uncomment the following line if your bare application
