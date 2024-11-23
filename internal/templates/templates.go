@@ -1,34 +1,49 @@
+/* templates.go
+*
+* templates package is responsible for embedding the default template files used to created the rex config yaml file and other optionial templates. The embedded files can be found in the 'default' directory inside this package.
+*
+* templates provides an interface to allow creating new custom ADR's, docs, or other files to be generated and used with rex.
+*
+* IE:
+*
+* default templates for ADR, github pages, for output to json, markdown, html
+* create custom templates for ADR or load them from a specified directory via config or cli flag
+ */
 package templates
 
-var (
-	configDefaultAdrTemplate  string = "templates.adr.default"
-	defaultAdrTemplateContent string = `# {{ .ADR.Title }}
-
-| Status | Author         | Date       |
-| ------ | -------------- | ---------- |
-| {{ .ADR.Status }} | {{ .ADR.Author }} | {{ .ADR.Date }} |
-
-## Context and Problem Statement
-
-## Decision Drivers
-
-
-## Considererd Options
-
-
-## Decision Outcome`
+import (
+	"embed"
+	"fmt"
 )
 
-type ADR struct {
-	Name      string
-	IsDefault bool
-	Content   string
+// TODO: add custom template generation later
+var configDefaultAdrTemplate string = "templates.adr.default"
+
+//go:embed default/adr.tmpl
+//go:embed default/rex.yaml
+//go:embed default/gh/adr.tmpl
+var defaultRexTemplates embed.FS
+
+type Template interface {
+	Read()    // read in template file from embedded directory
+	Execute() // Execute the template with passed in configuration variables
 }
 
-func (a *ADR) Create()   {}
-func (a *ADR) Generate() {}
+type ADR struct {
+	Title  string
+	Author string
+	Status string
+	Date   string
+}
 
-type ITemplate interface {
-	Create()
-	Generate()
+func (a *ADR) Read() {
+	t, _ := defaultRexTemplates.ReadFile("default/adr.tmpl")
+	fmt.Println(string(t))
+}
+func (a *ADR) Execute() {}
+
+type GhPages struct {
+	ADR
+	WebTitle string
+	Layout   string
 }
