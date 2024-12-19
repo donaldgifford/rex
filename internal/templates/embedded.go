@@ -31,4 +31,6 @@ func (et *EmbeddedTemplate) Read(file string) ([]byte, error) {
 
 func (et *EmbeddedTemplate) Execute()             {}
 func (et *EmbeddedTemplate) GenerateDirectories() {}
-func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error
+func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
+	return nil
+}

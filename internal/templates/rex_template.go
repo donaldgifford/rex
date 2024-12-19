@@ -31,4 +31,6 @@ func (rt *RexTemplate) Read(file string) ([]byte, error) {
 
 func (rt *RexTemplate) Execute() {}
 
-func (rt *RexTemplate) CreateADR(adr *adr.ADR) error
+func (rt *RexTemplate) CreateADR(adr *adr.ADR) error {
+	return nil
+}
