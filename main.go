@@ -21,7 +21,9 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"github.com/donaldgifford/rex/cmd"
+)
 
 func main() {
 	cmd.Execute()

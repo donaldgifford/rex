@@ -21,11 +21,11 @@ type ADRConfig struct {
 }
 
 // newADRConfig reads the configuration settings under "adr"
-func newADRConfig() *ADRConfig {
+func NewADRConfig() *ADRConfig {
 	return &ADRConfig{
-		path:       viper.GetString(""),
-		indexPage:  viper.GetString(""),
-		addToIndex: viper.GetBool(""),
+		path:       viper.GetString("adr.path"),
+		indexPage:  viper.GetString("adr.index_page"),
+		addToIndex: viper.GetBool("adr.add_to_index"),
 	}
 }
 

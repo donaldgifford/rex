@@ -32,6 +32,7 @@ import (
 var (
 	cfgFile string
 	version = "0.0.1"
+	install = false
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -69,6 +70,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $CWD/.rex.yaml)")
 
+	rootCmd.PersistentFlags().BoolVarP(&install, "install", "i", false, "pass on first run when creating .rex.yaml config file")
+
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -92,9 +95,17 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// if no config found, exit 1
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Fprintln(os.Stderr, "Config file not found, `run rex config create` to generate one", viper.ConfigFileUsed())
-		os.Exit(1)
+	// if --install is passed, we ignore the config file missing since we are passing this flag to create a new config file on first run
+	if install {
+		// If a config file is found, read it in.
+		if err := viper.ReadInConfig(); err == nil {
+			fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		}
+	} else {
+		// if no config found, exit 1
+		if err := viper.ReadInConfig(); err != nil {
+			fmt.Fprintln(os.Stderr, "Config file not found, `run rex config create --install ` to generate one", viper.ConfigFileUsed())
+			os.Exit(1)
+		}
 	}
 }

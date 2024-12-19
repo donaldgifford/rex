@@ -12,38 +12,73 @@
 package templates
 
 import (
-	"embed"
-	"fmt"
+	"github.com/donaldgifford/rex/internal/adr"
+	"github.com/spf13/viper"
 )
 
-// TODO: add custom template generation later
-var configDefaultAdrTemplate string = "templates.adr.default"
-
-//go:embed default/adr.tmpl
-//go:embed default/rex.yaml
-//go:embed default/gh/adr.tmpl
-var defaultRexTemplates embed.FS
-
 type Template interface {
-	Read()    // read in template file from embedded directory
-	Execute() // Execute the template with passed in configuration variables
+	Read(file string) ([]byte, error) // read in template file from embedded directory
+	Execute()                         // Execute the template with passed in configuration variables
+	GetSettings() *Settings
+	CreateADR(adr *adr.ADR) error
 }
 
-type ADR struct {
-	Title  string
-	Author string
-	Status string
-	Date   string
+func NewTemplate() Template {
+	if viper.GetBool("templates.enabled") {
+		return &RexTemplate{
+			Settings: Settings{
+				Path: viper.GetString("templates.path"),
+				ADR:  viper.GetString("templates.adr.default"),
+			},
+		}
+	} else {
+		return &EmbeddedTemplate{
+			Settings: Settings{
+				Path: "default/",
+				ADR:  "adr.tmpl",
+			},
+		}
+	}
 }
 
-func (a *ADR) Read() {
-	t, _ := defaultRexTemplates.ReadFile("default/adr.tmpl")
-	fmt.Println(string(t))
+type Settings struct {
+	Path string
+	ADR  string
 }
-func (a *ADR) Execute() {}
 
-type GhPages struct {
-	ADR
-	WebTitle string
-	Layout   string
-}
+// import (
+// 	"embed"
+// 	"fmt"
+// )
+//
+// // TODO: add custom template generation later
+// var configDefaultAdrTemplate string = "templates.adr.default"
+//
+// //go:embed default/adr.tmpl
+// //go:embed default/rex.yaml
+// //go:embed default/gh/adr.tmpl
+// var defaultRexTemplates embed.FS
+//
+// type Template interface {
+// 	Read()    // read in template file from embedded directory
+// 	Execute() // Execute the template with passed in configuration variables
+// }
+//
+// type ADR struct {
+// 	Title  string
+// 	Author string
+// 	Status string
+// 	Date   string
+// }
+//
+// func (a *ADR) Read() {
+// 	t, _ := defaultRexTemplates.ReadFile("default/adr.tmpl")
+// 	fmt.Println(string(t))
+// }
+// func (a *ADR) Execute() {}
+//
+// type GhPages struct {
+// 	ADR
+// 	WebTitle string
+// 	Layout   string
+// }

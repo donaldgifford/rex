@@ -3,7 +3,6 @@ adr:
   index_page: "README.md"
   add_to_index: true # on rex create, a new record will be added to the index page
 templates:
-  enabled: false # uses embedded templates by default. If true reference the paths
   path: "templates/"
   adr:
     default: "adr.tmpl"

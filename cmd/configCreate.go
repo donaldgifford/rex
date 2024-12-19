@@ -24,8 +24,11 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
+
+var force bool
 
 // configCreateCmd represents the configCreate command
 var configCreateCmd = &cobra.Command{
@@ -39,7 +42,18 @@ default config file created in the current directory. Ideally, you put it in
 your project root level directory. Creates .rex.yaml file.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("configCreate called")
+		// fmt.Println("configCreate called")
+
+		if install {
+			configFile := config.NewRexConfInstall()
+			err := configFile.GenerateConfig(force)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+
+		} else {
+			fmt.Println("Please use `--install` when running this command")
+		}
 	},
 }
 
@@ -55,4 +69,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// configCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	configCreateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
 }
