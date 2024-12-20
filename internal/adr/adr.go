@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 type ADR struct {
@@ -76,7 +78,7 @@ func NewADR(title string, author string, path string) (*ADR, error) {
 			Date:   time.Now().Format(time.DateOnly),
 		},
 		ID:   adrId,
-		Path: path,
+		Path: viper.GetString("adr.path"),
 	}, nil
 }
 

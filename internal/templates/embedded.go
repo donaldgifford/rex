@@ -3,6 +3,10 @@ package templates
 import (
 	"embed"
 	"fmt"
+	"log"
+	"os"
+	"strings"
+	"text/template"
 
 	"github.com/donaldgifford/rex/internal/adr"
 )
@@ -32,5 +36,38 @@ func (et *EmbeddedTemplate) Read(file string) ([]byte, error) {
 func (et *EmbeddedTemplate) Execute()             {}
 func (et *EmbeddedTemplate) GenerateDirectories() {}
 func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
+	// get settings for file path and name
+	// parse the template with Settings
+	// write template to file
+
+	tmpl, err := template.ParseFS(DefaultRexTemplates, fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.AdrTemplate))
+	if err != nil {
+		return err
+	}
+
+	// tmpl, err := template.ParseFiles(fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.AdrTemplate))
+	// if err != nil {
+	// 	return err
+	// }
+
+	strippedTitle := strings.Join(strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "), "-")
+	fileName := fmt.Sprintf("%d-%s.md", adr.ID, strippedTitle)
+
+	var f *os.File
+	f, err = os.Create(adr.Path + fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = tmpl.Execute(f, adr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = f.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return nil
 }

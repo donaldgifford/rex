@@ -27,23 +27,23 @@ func NewTemplate() Template {
 	if viper.GetBool("templates.enabled") {
 		return &RexTemplate{
 			Settings: Settings{
-				Path: viper.GetString("templates.path"),
-				ADR:  viper.GetString("templates.adr.default"),
+				TemplatePath: viper.GetString("templates.path"),
+				AdrTemplate:  viper.GetString("templates.adr.default"),
 			},
 		}
 	} else {
 		return &EmbeddedTemplate{
 			Settings: Settings{
-				Path: "default/",
-				ADR:  "adr.tmpl",
+				TemplatePath: "default/",
+				AdrTemplate:  "adr.tmpl",
 			},
 		}
 	}
 }
 
 type Settings struct {
-	Path string
-	ADR  string
+	TemplatePath string
+	AdrTemplate  string
 }
 
 // import (

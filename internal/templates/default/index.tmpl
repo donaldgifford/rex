@@ -1,0 +1,10 @@
+# {{ .Index.Title }}
+
+## ADRs
+
+  | ID | Title | Status | Author         |  Created | Current Version |
+  | -- | ----- | ------ | -------------- | -------- | --------------- |
+{{ range .ADRs }}
+  | {{ .Content.Id }} | {{ .Content.Title }} | {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |
+{{ end }}
+
