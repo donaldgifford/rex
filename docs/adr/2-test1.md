@@ -1,5 +1,4 @@
 ---
-
 permalink: /:path/:basename:output_ext
 title: 0001-rex
 layout: adr
