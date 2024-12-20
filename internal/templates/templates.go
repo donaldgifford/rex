@@ -21,29 +21,33 @@ type Template interface {
 	Execute()                         // Execute the template with passed in configuration variables
 	GetSettings() *Settings
 	CreateADR(adr *adr.ADR) error
+	CreateIndex(idx *adr.Index) error
 }
 
 func NewTemplate() Template {
 	if viper.GetBool("templates.enabled") {
 		return &RexTemplate{
 			Settings: Settings{
-				TemplatePath: viper.GetString("templates.path"),
-				AdrTemplate:  viper.GetString("templates.adr.default"),
+				TemplatePath:  viper.GetString("templates.path"),
+				AdrTemplate:   viper.GetString("templates.adr.default"),
+				IndexTemplate: viper.GetString("templates.adr.index"),
 			},
 		}
 	} else {
 		return &EmbeddedTemplate{
 			Settings: Settings{
-				TemplatePath: "default/",
-				AdrTemplate:  "adr.tmpl",
+				TemplatePath:  "default/",
+				AdrTemplate:   "adr.tmpl",
+				IndexTemplate: "index.tmpl",
 			},
 		}
 	}
 }
 
 type Settings struct {
-	TemplatePath string
-	AdrTemplate  string
+	TemplatePath  string
+	AdrTemplate   string
+	IndexTemplate string
 }
 
 // import (

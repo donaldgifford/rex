@@ -24,7 +24,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/donaldgifford/rex/internal/markd"
+	"github.com/donaldgifford/rex/internal/adr"
+	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -54,17 +55,16 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("adrList called")
-		markdowns := "# Header1\n## Header 2"
-		parsed, err := markd.ParseMD(markdowns)
+
+		configFile := config.NewIRexConf()
+
+		newIdx := adr.NewIndex()
+
+		err := configFile.CreateIndex(newIdx)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(err.Error())
+			return
 		}
-
-		res := map[string]any{
-			"ParsedMarkdown": parsed,
-		}
-
-		fmt.Println(res)
 	},
 }
 

@@ -12,6 +12,7 @@ import (
 )
 
 //go:embed default/adr.tmpl
+//go:embed default/index.tmpl
 //go:embed default/rex.yaml
 var DefaultRexTemplates embed.FS
 
@@ -60,6 +61,31 @@ func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 	}
 
 	err = tmpl.Execute(f, adr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = f.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return nil
+}
+
+func (et *EmbeddedTemplate) CreateIndex(idx *adr.Index) error {
+	tmpl, err := template.ParseFS(DefaultRexTemplates, fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.IndexTemplate))
+	if err != nil {
+		return err
+	}
+
+	var f *os.File
+	f, err = os.Create(idx.DocPath + idx.IndexFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = tmpl.Execute(f, idx)
 	if err != nil {
 		log.Fatal(err)
 	}
