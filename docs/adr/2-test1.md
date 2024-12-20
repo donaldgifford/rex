@@ -3,7 +3,7 @@ permalink: /:path/:basename:output_ext
 title: 0001-rex
 layout: adr
 status: pending
-author: @donaldgifford
+author: '@donaldgifford'
 created: 2024-12-20
 last_update: N/A
 current_version: v0.0.1
