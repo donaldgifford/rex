@@ -73,7 +73,7 @@ func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 	return nil
 }
 
-func (et *EmbeddedTemplate) CreateIndex(idx *adr.Index) error {
+func (et *EmbeddedTemplate) GenerateIndex(idx *adr.Index) error {
 	tmpl, err := template.ParseFS(DefaultRexTemplates, fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.IndexTemplate))
 	if err != nil {
 		return err

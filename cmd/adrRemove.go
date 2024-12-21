@@ -39,6 +39,16 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("adrRemove called")
+		// renames the adr file to "id-name-rev-number.md"
+		// Actually change to adr revision instead of remove
+		// revision creates a copy of the file at same name new rev number
+		// or create dir for revisions and store all in there.
+		//
+		// adrs/
+		//      revisions/
+		//              0001-my-adr/
+		//                        rev1.md
+		//                        rev2.md
 	},
 }
 

@@ -14,7 +14,7 @@ type IRexConf interface {
 	GenerateDirectories(force bool, index bool) error
 	Settings() *ConfigSettings
 	CreateADR(adr *adr.ADR) error
-	CreateIndex(idx *adr.Index) error
+	CreateIndex() error
 }
 
 // NewIRexConf generator for IRexConf interface
@@ -57,11 +57,11 @@ func (rc *RexConf) GenerateDirectories(force bool, index bool) error {
 	}
 
 	// if index true, create index file from rex.conf and template
-	idx := adr.NewIndex()
-
-	err = rc.Templates.CreateIndex(idx)
-	if err != nil {
-		return err
+	if index {
+		err = rc.CreateIndex()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -95,8 +95,15 @@ func (rc *RexConf) CreateADR(adr *adr.ADR) error {
 	return nil
 }
 
-func (rc *RexConf) CreateIndex(idx *adr.Index) error {
-	err := rc.Templates.CreateIndex(idx)
+func (rc *RexConf) CreateIndex() error {
+	idx := adr.NewIndex()
+
+	err := idx.GetIndexAdrs()
+	if err != nil {
+		return err
+	}
+
+	err = rc.Templates.GenerateIndex(idx)
 	if err != nil {
 		return err
 	}

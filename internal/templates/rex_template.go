@@ -35,6 +35,6 @@ func (rt *RexTemplate) CreateADR(adr *adr.ADR) error {
 	return nil
 }
 
-func (rt *RexTemplate) CreateIndex(idx *adr.Index) error {
+func (rt *RexTemplate) GenerateIndex(idx *adr.Index) error {
 	return nil
 }

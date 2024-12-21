@@ -24,7 +24,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
@@ -58,9 +57,7 @@ to quickly create a Cobra application.`,
 
 		configFile := config.NewIRexConf()
 
-		newIdx := adr.NewIndex()
-
-		err := configFile.CreateIndex(newIdx)
+		err := configFile.CreateIndex()
 		if err != nil {
 			fmt.Println(err.Error())
 			return

@@ -21,7 +21,7 @@ type Template interface {
 	Execute()                         // Execute the template with passed in configuration variables
 	GetSettings() *Settings
 	CreateADR(adr *adr.ADR) error
-	CreateIndex(idx *adr.Index) error
+	GenerateIndex(idx *adr.Index) error
 }
 
 func NewTemplate() Template {
