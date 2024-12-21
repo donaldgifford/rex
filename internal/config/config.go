@@ -11,7 +11,7 @@ import (
 // IRexConf interface for creating and generating configs
 type IRexConf interface {
 	ReadConfig() error
-	GenerateDirectories(force bool) error
+	GenerateDirectories(force bool, index bool) error
 	Settings() *ConfigSettings
 	CreateADR(adr *adr.ADR) error
 	CreateIndex(idx *adr.Index) error
@@ -39,7 +39,7 @@ func (rc *RexConf) GetTemplatesConfigSettings() *templates.Settings {
 	return rc.Templates.GetSettings()
 }
 
-func (rc *RexConf) GenerateDirectories(force bool) error {
+func (rc *RexConf) GenerateDirectories(force bool, index bool) error {
 	// get current working directory
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -53,6 +53,14 @@ func (rc *RexConf) GenerateDirectories(force bool) error {
 	err = os.MkdirAll(dirPath, 0755)
 	if err != nil && !os.IsExist(err) {
 		// log.Fatal(err)
+		return err
+	}
+
+	// if index true, create index file from rex.conf and template
+	idx := adr.NewIndex()
+
+	err = rc.Templates.CreateIndex(idx)
+	if err != nil {
 		return err
 	}
 

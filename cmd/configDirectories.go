@@ -28,9 +28,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var index bool
+
 // configDirectoriesCmd represents the configDirectories command
 var configDirectoriesCmd = &cobra.Command{
-	Use:   "configDirectories",
+	Use:   "directories",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -43,7 +45,7 @@ to quickly create a Cobra application.`,
 
 		configFile := config.NewIRexConf()
 
-		err := configFile.GenerateDirectories(force)
+		err := configFile.GenerateDirectories(force, index)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -64,4 +66,7 @@ func init() {
 	// configDirectoriesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	// configDirectoriesCmd.Flags().BoolVarP(&createDirectories, "create-directories", "d", false, "create directories from default config")
+
+	configDirectoriesCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting directories and index")
+	configDirectoriesCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
 }

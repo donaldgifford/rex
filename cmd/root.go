@@ -33,6 +33,7 @@ var (
 	cfgFile string
 	version = "0.0.1"
 	install = false
+	force   = false
 )
 
 // rootCmd represents the base command when called without any subcommands

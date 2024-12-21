@@ -28,7 +28,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var force bool
+var (
+	directoriesCreate bool
+	indexCreate       bool
+)
 
 // configCreateCmd represents the configCreate command
 var configCreateCmd = &cobra.Command{
@@ -49,6 +52,7 @@ your project root level directory. Creates .rex.yaml file.`,
 			err := configFile.GenerateConfig(force)
 			if err != nil {
 				fmt.Println(err.Error())
+				return
 			}
 
 		} else {
