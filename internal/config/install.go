@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/templates"
 	"github.com/spf13/viper"
 )
@@ -113,7 +112,7 @@ func (rc *RexConfInstall) GenerateDirectories(force bool, index bool) error {
 
 	// if index true, create index file from rex.conf and template
 	if index {
-		err = rc.GenerateIndex("default/index_readme.tmpl")
+		err = rc.GenerateIndex()
 		if err != nil {
 			return err
 		}
@@ -122,9 +121,9 @@ func (rc *RexConfInstall) GenerateDirectories(force bool, index bool) error {
 	return nil
 }
 
-func (rc *RexConfInstall) GenerateIndex(file string) error {
+func (rc *RexConfInstall) GenerateIndex() error {
 	// get template to be used
-	idx, err := templates.DefaultRexTemplates.ReadFile(file)
+	idx, err := templates.DefaultRexTemplates.ReadFile("default/index_readme.tmpl")
 	if err != nil {
 		return err
 	}
@@ -147,18 +146,6 @@ func (rc *RexConfInstall) GenerateIndex(file string) error {
 
 	// write the file
 	_, err = f.Write(idx)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (rc *RexConfInstall) CreateIndex() error {
-	t := templates.NewTemplate()
-
-	idx := adr.NewIndex()
-	err := t.GenerateIndex(idx)
 	if err != nil {
 		return err
 	}

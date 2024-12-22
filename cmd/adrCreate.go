@@ -23,7 +23,10 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/donaldgifford/rex/internal/adr"
+	"github.com/donaldgifford/rex/internal/rex"
 	"github.com/spf13/cobra"
 )
 
@@ -42,21 +45,21 @@ rex create -t "My ADR Title" -a "Donald Gifford"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("adrCreate called")
-		//
-		// configFile := config.NewIRexConf()
-		// confSettings := configFile.Settings()
-		//
-		// newAdr, err := adr.NewADR(title, author, confSettings.ADR.Path)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
-		//
-		// err = configFile.CreateADR(newAdr)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
+
+		content := adr.Content{
+			Title:  title,
+			Author: author,
+			Status: "Draft",
+			Date:   time.Now().Format(time.DateOnly),
+		}
+
+		rex := rex.NewRex(install)
+		rex.NewADR(&content)
+
+		err := rex.UpdateIndex()
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 	},
 }
 

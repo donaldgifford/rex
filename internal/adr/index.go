@@ -1,3 +1,9 @@
+/*
+* Eventually index will work like terraform-docs where you put an anchor in the readme or whatever markdown file and then
+* it will parse the template into that file between those anchors.
+*
+*
+ */
 package adr
 
 import (
@@ -31,7 +37,7 @@ type IndexAdr struct {
 	Title string
 }
 
-func NewIndex() *Index {
+func NewIIndex() *Index {
 	return &Index{
 		DocPath:       viper.GetString("adr.path"),
 		IndexFileName: viper.GetString("adr.index_page"),

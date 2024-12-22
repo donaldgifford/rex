@@ -28,6 +28,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	directories bool
+	index       bool
+)
+
 // configGenerateCmd represents the configGenerate command
 var configGenerateCmd = &cobra.Command{
 	Use:   "generate",
@@ -41,8 +46,21 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("configGenerate called")
 
-		rex := rex.NewRex()
+		rex := rex.NewRex(install)
 		fmt.Println(rex.Settings())
+
+		// create new config, if force, overwrite previous
+		rex.Config.GenerateConfig(force)
+
+		// if --directories and --index set
+		if directories && index {
+			rex.Config.GenerateDirectories(force, index)
+		}
+
+		// if just --index
+		if index && !directories {
+			rex.Config.GenerateIndex()
+		}
 	},
 }
 
@@ -59,7 +77,7 @@ func init() {
 	// is called directly, e.g.:
 	// configGenerateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	// configGenerateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
-	// configGenerateCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
-	// configGenerateCmd.Flags().BoolVarP(&directories, "directories", "d", false, "create directories for docs")
+	configGenerateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
+	configGenerateCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
+	configGenerateCmd.Flags().BoolVarP(&directories, "directories", "d", false, "create directories for docs")
 }

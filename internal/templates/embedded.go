@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/donaldgifford/rex/internal/adr"
+	"github.com/spf13/viper"
 )
 
 //go:embed default/adr.tmpl
@@ -47,16 +48,11 @@ func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 		return err
 	}
 
-	// tmpl, err := template.ParseFiles(fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.AdrTemplate))
-	// if err != nil {
-	// 	return err
-	// }
-
 	strippedTitle := strings.Join(strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "), "-")
 	fileName := fmt.Sprintf("%d-%s.md", adr.ID, strippedTitle)
 
 	var f *os.File
-	f, err = os.Create("" + fileName)
+	f, err = os.Create(viper.GetString("adr.path") + fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
