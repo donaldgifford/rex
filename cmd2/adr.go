@@ -24,49 +24,32 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
 
-var index bool
+// adrCmd represents the adr command
+var adrCmd = &cobra.Command{
+	Use:   "adr",
+	Short: "Commands for ADR functions",
+	Long: `Create and List ADR's:
 
-// configDirectoriesCmd represents the configDirectories command
-var configDirectoriesCmd = &cobra.Command{
-	Use:   "directories",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+rex adr create -t "My Title" -a "User Name"
+rex adr list`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("configDirectories called")
-
-		configFile := config.NewIRexConf()
-
-		err := configFile.GenerateDirectories(force, index)
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		fmt.Println("adr called")
 	},
 }
 
 func init() {
-	configCmd.AddCommand(configDirectoriesCmd)
+	rootCmd.AddCommand(adrCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// configDirectoriesCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// adrCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// configDirectoriesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	// configDirectoriesCmd.Flags().BoolVarP(&createDirectories, "create-directories", "d", false, "create directories from default config")
-
-	configDirectoriesCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting directories and index")
-	configDirectoriesCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
+	// adrCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -13,6 +13,7 @@ import (
 
 //go:embed default/adr.tmpl
 //go:embed default/index.tmpl
+//go:embed default/index_readme.tmpl
 //go:embed default/rex.yaml
 var DefaultRexTemplates embed.FS
 
@@ -55,7 +56,7 @@ func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 	fileName := fmt.Sprintf("%d-%s.md", adr.ID, strippedTitle)
 
 	var f *os.File
-	f, err = os.Create(adr.Path + fileName)
+	f, err = os.Create("" + fileName)
 	if err != nil {
 		log.Fatal(err)
 	}

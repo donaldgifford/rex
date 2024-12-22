@@ -24,55 +24,42 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/donaldgifford/rex/internal/rex"
 	"github.com/spf13/cobra"
 )
 
-var (
-	title  string
-	author string
-)
+// configGenerateCmd represents the configGenerate command
+var configGenerateCmd = &cobra.Command{
+	Use:   "generate",
+	Short: "Generate and install config files, directories, etc",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
 
-// adrCreateCmd represents the adrCreate command
-var adrCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new ADR",
-	Long: `Create a new ADR in the path specifed in the .rex.yaml config. For example:
-
-rex create -t "My ADR Title" -a "Donald Gifford"
-`,
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("adrCreate called")
-		//
-		// configFile := config.NewIRexConf()
-		// confSettings := configFile.Settings()
-		//
-		// newAdr, err := adr.NewADR(title, author, confSettings.ADR.Path)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
-		//
-		// err = configFile.CreateADR(newAdr)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
+		fmt.Println("configGenerate called")
+
+		rex := rex.NewRex()
+		fmt.Println(rex.Settings())
 	},
 }
 
 func init() {
-	adrCmd.AddCommand(adrCreateCmd)
+	configCmd.AddCommand(configGenerateCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// adrCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// configGenerateCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// adrCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// configGenerateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	adrCreateCmd.Flags().StringVarP(&title, "title", "t", "", "Title for ADR")
-	adrCreateCmd.Flags().StringVarP(&author, "author", "a", "", "Author for ADR")
+	// configGenerateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
+	// configGenerateCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
+	// configGenerateCmd.Flags().BoolVarP(&directories, "directories", "d", false, "create directories for docs")
 }

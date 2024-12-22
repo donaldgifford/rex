@@ -24,55 +24,54 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
 
 var (
-	title  string
-	author string
+	directoriesCreate bool
+	indexCreate       bool
 )
 
-// adrCreateCmd represents the adrCreate command
-var adrCreateCmd = &cobra.Command{
+// configCreateCmd represents the configCreate command
+var configCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new ADR",
-	Long: `Create a new ADR in the path specifed in the .rex.yaml config. For example:
+	Short: "Create a rex.yaml config file",
+	Long: `Create a default rex.yaml config file. For example:
 
-rex create -t "My ADR Title" -a "Donald Gifford"
-`,
+rex config create
+
+default config file created in the current directory. Ideally, you put it in 
+your project root level directory. Creates .rex.yaml file.`,
+
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("adrCreate called")
-		//
-		// configFile := config.NewIRexConf()
-		// confSettings := configFile.Settings()
-		//
-		// newAdr, err := adr.NewADR(title, author, confSettings.ADR.Path)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
-		//
-		// err = configFile.CreateADR(newAdr)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
+		// fmt.Println("configCreate called")
+
+		if install {
+			configFile := config.NewRexConfigInstall()
+			err := configFile.GenerateConfig(force)
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+
+		} else {
+			fmt.Println("Please use `--install` when running this command")
+		}
 	},
 }
 
 func init() {
-	adrCmd.AddCommand(adrCreateCmd)
+	configCmd.AddCommand(configCreateCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// adrCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// configCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// adrCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	adrCreateCmd.Flags().StringVarP(&title, "title", "t", "", "Title for ADR")
-	adrCreateCmd.Flags().StringVarP(&author, "author", "a", "", "Author for ADR")
+	// configCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	configCreateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
 }

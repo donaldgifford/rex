@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/templates"
 	"github.com/spf13/viper"
 )
 
-func NewRexConfInstall() *RexConfInstall {
+func NewRexConfigInstall() *RexConfInstall {
 	return &RexConfInstall{}
 }
 
@@ -25,6 +26,10 @@ func (rc *RexConfInstall) ConfigExists() bool {
 // ReadYamlConfig reads the rex.yaml config in.
 // If a config is found it takes the settings in the config file and sets them in the RexConf
 func (rc *RexConfInstall) ReadConfig() error {
+	return nil
+}
+
+func (rc *RexConfInstall) Settings() *RexConfig {
 	return nil
 }
 
@@ -85,5 +90,78 @@ func (rc *RexConfInstall) GenerateConfig(force bool) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// GenerateDirectories will create directories in the default setting
+func (rc *RexConfInstall) GenerateDirectories(force bool, index bool) error {
+	// get current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	// create directory path string
+	dirPath := fmt.Sprintf("%s/%s", cwd, "docs/adr/")
+
+	// mkdirall with path string
+	err = os.MkdirAll(dirPath, 0755)
+	if err != nil && !os.IsExist(err) {
+		// log.Fatal(err)
+		return err
+	}
+
+	// if index true, create index file from rex.conf and template
+	if index {
+		err = rc.GenerateIndex("default/index_readme.tmpl")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (rc *RexConfInstall) GenerateIndex(file string) error {
+	// get template to be used
+	idx, err := templates.DefaultRexTemplates.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(idx))
+
+	// get current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	// create the file
+	fileName := cwd + "/docs/adr/" + "README.md"
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	// write the file
+	_, err = f.Write(idx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rc *RexConfInstall) CreateIndex() error {
+	t := templates.NewTemplate()
+
+	idx := adr.NewIndex()
+	err := t.GenerateIndex(idx)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

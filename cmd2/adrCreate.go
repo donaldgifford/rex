@@ -42,7 +42,7 @@ rex create -t "My ADR Title" -a "Donald Gifford"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("adrCreate called")
-		//
+
 		// configFile := config.NewIRexConf()
 		// confSettings := configFile.Settings()
 		//

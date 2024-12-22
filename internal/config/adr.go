@@ -1,7 +1,5 @@
 package config
 
-import "github.com/spf13/viper"
-
 var (
 	rexConfigFile        string = ".rex.yaml"
 	rexConfigFileContent string = `adr:
@@ -14,28 +12,28 @@ templates:
     default: "adr.tmpl"`
 )
 
-type ADRConfig struct {
-	Path       string
-	IndexPage  string
-	AddToIndex bool
-}
-
-// newADRConfig reads the configuration settings under "adr"
-func NewADRConfig() *ADRConfig {
-	return &ADRConfig{
-		Path:       viper.GetString("adr.path"),
-		IndexPage:  viper.GetString("adr.index_page"),
-		AddToIndex: viper.GetBool("adr.add_to_index"),
-	}
-}
-
-// GetSettings returns the settings for ADR
-func (a *ADRConfig) GetSettings() *ADRConfig {
-	return a
-	// settings := make(map[string]any)
-	// settings["path"] = a.path
-	// settings["indexPage"] = a.indexPage
-	// settings["addToIndex"] = a.addToIndex
-	//
-	// return settings
-}
+// type ADRConfig struct {
+// 	Path       string
+// 	IndexPage  string
+// 	AddToIndex bool
+// }
+//
+// // newADRConfig reads the configuration settings under "adr"
+// func NewADRConfig() *ADRConfig {
+// 	return &ADRConfig{
+// 		Path:       viper.GetString("adr.path"),
+// 		IndexPage:  viper.GetString("adr.index_page"),
+// 		AddToIndex: viper.GetBool("adr.add_to_index"),
+// 	}
+// }
+//
+// // GetSettings returns the settings for ADR
+// func (a *ADRConfig) GetSettings() *ADRConfig {
+// 	return a
+// 	// settings := make(map[string]any)
+// 	// settings["path"] = a.path
+// 	// settings["indexPage"] = a.indexPage
+// 	// settings["addToIndex"] = a.addToIndex
+// 	//
+// 	// return settings
+// }

@@ -105,7 +105,7 @@ func initConfig() {
 	} else {
 		// if no config found, exit 1
 		if err := viper.ReadInConfig(); err != nil {
-			fmt.Fprintln(os.Stderr, "Config file not found, run: rex config generate --install to generate one", viper.ConfigFileUsed())
+			fmt.Fprintln(os.Stderr, "Config file not found, `run rex config create --install ` to generate one", viper.ConfigFileUsed())
 			os.Exit(1)
 		}
 	}

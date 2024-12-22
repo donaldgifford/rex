@@ -24,54 +24,48 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
 
-var (
-	directoriesCreate bool
-	indexCreate       bool
-)
+var index bool
 
-// configCreateCmd represents the configCreate command
-var configCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a rex.yaml config file",
-	Long: `Create a default rex.yaml config file. For example:
+// configDirectoriesCmd represents the configDirectories command
+var configDirectoriesCmd = &cobra.Command{
+	Use:   "directories",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
 
-rex config create
-
-default config file created in the current directory. Ideally, you put it in 
-your project root level directory. Creates .rex.yaml file.`,
-
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// fmt.Println("configCreate called")
+		fmt.Println("configDirectories called")
 
-		if install {
-			configFile := config.NewRexConfInstall()
-			err := configFile.GenerateConfig(force)
-			if err != nil {
-				fmt.Println(err.Error())
-				return
-			}
-
-		} else {
-			fmt.Println("Please use `--install` when running this command")
-		}
+		// configFile := config.NewIRexConf()
+		//
+		// err := configFile.GenerateDirectories(force, index)
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// }
 	},
 }
 
 func init() {
-	configCmd.AddCommand(configCreateCmd)
+	configCmd.AddCommand(configDirectoriesCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// configCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// configDirectoriesCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// configCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	configCreateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
+	// configDirectoriesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	// configDirectoriesCmd.Flags().BoolVarP(&createDirectories, "create-directories", "d", false, "create directories from default config")
+
+	configDirectoriesCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting directories and index")
+	configDirectoriesCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
 }

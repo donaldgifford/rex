@@ -24,7 +24,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -55,13 +54,13 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("adrList called")
 
-		configFile := config.NewIRexConf()
-
-		err := configFile.CreateIndex()
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
+		// configFile := config.NewIRexConf()
+		//
+		// err := configFile.CreateIndex()
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// 	return
+		// }
 	},
 }
 

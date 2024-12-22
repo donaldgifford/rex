@@ -27,52 +27,34 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	title  string
-	author string
-)
+// configCmd represents the config command
+var configCmd = &cobra.Command{
+	Use:   "config",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
 
-// adrCreateCmd represents the adrCreate command
-var adrCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new ADR",
-	Long: `Create a new ADR in the path specifed in the .rex.yaml config. For example:
-
-rex create -t "My ADR Title" -a "Donald Gifford"
-`,
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("adrCreate called")
+		fmt.Println("config called")
 		//
 		// configFile := config.NewIRexConf()
-		// confSettings := configFile.Settings()
-		//
-		// newAdr, err := adr.NewADR(title, author, confSettings.ADR.Path)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
-		//
-		// err = configFile.CreateADR(newAdr)
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// 	return
-		// }
+		// configFile.ReadConfig()
 	},
 }
 
 func init() {
-	adrCmd.AddCommand(adrCreateCmd)
+	rootCmd.AddCommand(configCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// adrCreateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// configCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// adrCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	adrCreateCmd.Flags().StringVarP(&title, "title", "t", "", "Title for ADR")
-	adrCreateCmd.Flags().StringVarP(&author, "author", "a", "", "Author for ADR")
+	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -9,6 +9,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+type IIndex interface {
+	Execute() *Index
+	ADRs() error
+	Process(fileName string) *IndexAdr
+}
+
 type Index struct {
 	DocPath       string
 	IndexFileName string
@@ -17,10 +23,10 @@ type Index struct {
 
 type IndexContent struct {
 	Title string
-	Adrs  []*IndexAdrs
+	Adrs  []*IndexAdr
 }
 
-type IndexAdrs struct {
+type IndexAdr struct {
 	Id    int
 	Title string
 }
@@ -35,8 +41,12 @@ func NewIndex() *Index {
 	}
 }
 
-func (idx *Index) GetIndexAdrs() error {
-	var myAdrs []*IndexAdrs
+func (idx *Index) Execute() *Index {
+	return idx
+}
+
+func (idx *Index) ADRs() error {
+	var myAdrs []*IndexAdr
 
 	entries, err := os.ReadDir(idx.DocPath)
 	if err != nil {
@@ -46,11 +56,8 @@ func (idx *Index) GetIndexAdrs() error {
 
 	for _, e := range entries {
 		if e.Name() != idx.IndexFileName {
-			id, title := idx.ProcessIndexAdrs(e.Name())
-			myAdrs = append(myAdrs, &IndexAdrs{
-				Id:    id,
-				Title: title,
-			})
+			adr := idx.Process(e.Name())
+			myAdrs = append(myAdrs, adr)
 			fmt.Println(e.Name())
 		}
 	}
@@ -58,10 +65,13 @@ func (idx *Index) GetIndexAdrs() error {
 	return nil
 }
 
-func (idx *Index) ProcessIndexAdrs(file string) (int, string) {
+func (idx *Index) Process(file string) *IndexAdr {
 	idTitle := strings.SplitN(file, "-", 2)
 	id, _ := strconv.Atoi(idTitle[0])
 	title := strings.TrimSuffix(idTitle[1], ".md")
 
-	return id, title
+	return &IndexAdr{
+		Id:    id,
+		Title: title,
+	}
 }

@@ -22,10 +22,13 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/donaldgifford/rex/internal/config"
 	"github.com/spf13/cobra"
+)
+
+var (
+	directories bool
+	index       bool
 )
 
 // configCmd represents the config command
@@ -39,10 +42,22 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
+		// fmt.Println("config called")
+		rex := config.NewRexConfigInstall()
+		if install {
+			// config.NewRexConfigInstall().GenerateConfig(force)
+			rex.GenerateConfig(force)
+		}
 
-		configFile := config.NewIRexConf()
-		configFile.ReadConfig()
+		if directories && index {
+			// config.NewRexConfigInstall().GenerateDirectories(force)
+			rex.GenerateDirectories(force, index)
+		}
+
+		if index && !directories {
+			rex.GenerateIndex("default/index_readme.tmpl")
+			// config.NewRexConfigInstall().CreateIndex()
+		}
 	},
 }
 
@@ -58,4 +73,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	configCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
+	configCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
+	configCmd.Flags().BoolVarP(&directories, "directories", "d", false, "create directories for docs")
 }
