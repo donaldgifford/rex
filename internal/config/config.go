@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/donaldgifford/rex/internal/templates"
 	"github.com/spf13/viper"
+
+	"github.com/donaldgifford/rex/internal/templates"
 )
 
 type RexConfigurer interface {
@@ -206,7 +207,7 @@ func (rc *RexConfig) GenerateConfig(force bool) error {
 		return nil
 	}
 
-	// check if config exists so not to accidently overwrite your config
+	// check if config exists so not to accidentally overwrite your config
 	if rc.ConfigExists() {
 		fmt.Println("Config already exists. Use --force option to overwrite it.")
 		return nil

@@ -12,8 +12,9 @@
 package templates
 
 import (
-	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/spf13/viper"
+
+	"github.com/donaldgifford/rex/internal/adr"
 )
 
 type Template interface {

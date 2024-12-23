@@ -67,7 +67,7 @@ package config
 // 		return nil
 // 	}
 //
-// 	// check if config exists so not to accidently overwrite your config
+// 	// check if config exists so not to accidentally overwrite your config
 // 	if c.ConfigExists() {
 // 		fmt.Println("Config already exists. Use --force option to overwrite it.")
 // 		return nil

@@ -25,9 +25,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/spf13/cobra"
+
 	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/rex"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -39,7 +40,7 @@ var (
 var adrCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new ADR",
-	Long: `Create a new ADR in the path specifed in the .rex.yaml config. For example:
+	Long: `Create a new ADR in the path specified in the .rex.yaml config. For example:
 
 rex create -t "My ADR Title" -a "Donald Gifford"
 `,

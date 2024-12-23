@@ -8,8 +8,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/spf13/viper"
+
+	"github.com/donaldgifford/rex/internal/adr"
 )
 
 //go:embed default/adr.tmpl
