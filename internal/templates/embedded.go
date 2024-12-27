@@ -33,7 +33,6 @@ func (et *EmbeddedTemplate) Read(file string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(t))
 	return t, nil
 }
 

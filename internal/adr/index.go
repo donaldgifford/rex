@@ -57,7 +57,7 @@ func (idx *Index) ADRs() error {
 	entries, err := os.ReadDir(idx.DocPath)
 	if err != nil {
 		fmt.Println(err)
-		return nil
+		return err
 	}
 
 	for _, e := range entries {

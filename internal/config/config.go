@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -13,7 +14,7 @@ type RexConfigurer interface {
 	ConfigExists() bool
 	ReadConfig() error
 	GenerateConfig(force bool) error
-	GenerateIndex() error
+	GenerateIndex(force bool) error
 	GenerateDirectories(force bool, index bool) error
 	Settings() *RexConfig
 }
@@ -210,7 +211,7 @@ func (rc *RexConfig) GenerateConfig(force bool) error {
 	// check if config exists so not to accidentally overwrite your config
 	if rc.ConfigExists() {
 		fmt.Println("Config already exists. Use --force option to overwrite it.")
-		return nil
+		return errors.New("config already exists. Use --force option to overwrite it")
 	}
 
 	// write the config file
@@ -225,6 +226,6 @@ func (rc *RexConfig) GenerateDirectories(force bool, index bool) error {
 	return nil
 }
 
-func (rc *RexConfig) GenerateIndex() error {
+func (rc *RexConfig) GenerateIndex(force bool) error {
 	return nil
 }

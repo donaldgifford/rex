@@ -60,7 +60,7 @@ to quickly create a Cobra application.`,
 
 		// if just --index
 		if index && !directories {
-			rex.Config.GenerateIndex()
+			rex.Config.GenerateIndex(force)
 		}
 	},
 }

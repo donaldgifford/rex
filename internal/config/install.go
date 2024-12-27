@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -113,7 +114,7 @@ func (rc *RexConfInstall) GenerateDirectories(force bool, index bool) error {
 
 	// if index true, create index file from rex.conf and template
 	if index {
-		err = rc.GenerateIndex()
+		err = rc.GenerateIndex(force)
 		if err != nil {
 			return err
 		}
@@ -122,34 +123,62 @@ func (rc *RexConfInstall) GenerateDirectories(force bool, index bool) error {
 	return nil
 }
 
-func (rc *RexConfInstall) GenerateIndex() error {
-	// get template to be used
-	idx, err := templates.DefaultRexTemplates.ReadFile("default/index_readme.tmpl")
-	if err != nil {
-		return err
-	}
-	fmt.Println(string(idx))
+func (rc *RexConfInstall) GenerateIndex(force bool) error {
+	if force {
+		// get template to be used
+		idx, err := templates.DefaultRexTemplates.ReadFile("default/index_readme.tmpl")
+		if err != nil {
+			return err
+		}
+		// fmt.Println(string(idx))
 
+		// get current working directory
+		cwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+
+		// create the file
+		fileName := cwd + "/docs/adr/" + "README.md"
+		f, err := os.Create(fileName)
+		if err != nil {
+			return err
+		}
+
+		defer f.Close()
+
+		// write the file
+		_, err = f.Write(idx)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 	// get current working directory
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 
-	// create the file
-	fileName := cwd + "/docs/adr/" + "README.md"
-	f, err := os.Create(fileName)
-	if err != nil {
-		return err
+	f, err := os.Open(cwd + "/docs/adr/" + "README.md")
+	if errors.Is(err, os.ErrNotExist) {
+		defer f.Close()
+
+		// get template to be used
+		idx, err := templates.DefaultRexTemplates.ReadFile("default/index_readme.tmpl")
+		if err != nil {
+			return err
+		}
+
+		// write the file
+		_, err = f.Write(idx)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	} else {
+		return errors.New("file exists and you didnt pass force flag")
 	}
-
-	defer f.Close()
-
-	// write the file
-	_, err = f.Write(idx)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

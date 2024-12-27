@@ -14,6 +14,7 @@ type IADR interface {
 	Create(content *Content) (*ADR, error)
 	Revision(id int) (*ADR, error)
 	Id() (int, error)
+	GetSettings() *ADRConfig
 }
 
 func NewIADR() IADR {
@@ -113,6 +114,10 @@ func (adr *ADR) Create(content *Content) (*ADR, error) {
 
 func (adr *ADR) Revision(id int) (*ADR, error) {
 	return nil, nil
+}
+
+func (adr *ADR) GetSettings() *ADRConfig {
+	return adr.Config.GetSettings()
 }
 
 func NewADR() *ADR {
