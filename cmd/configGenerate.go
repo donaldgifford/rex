@@ -48,19 +48,28 @@ to quickly create a Cobra application.`,
 		fmt.Println("configGenerate called")
 
 		rex := rex.NewRex(install)
-		fmt.Println(rex.Settings())
+		cmd.Println(rex.Settings())
 
 		// create new config, if force, overwrite previous
-		rex.Config.GenerateConfig(force)
+		err := rex.Config.GenerateConfig(force)
+		if err != nil {
+			cmd.Println(err.Error())
+		}
 
 		// if --directories and --index set
 		if directories && index {
-			rex.Config.GenerateDirectories(force, index)
+			err := rex.Config.GenerateDirectories(force, index)
+			if err != nil {
+				cmd.Println(err.Error())
+			}
 		}
 
 		// if just --index
 		if index && !directories {
-			rex.Config.GenerateIndex(force)
+			err := rex.Config.GenerateIndex(force)
+			if err != nil {
+				cmd.Println(err.Error())
+			}
 		}
 	},
 }

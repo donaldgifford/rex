@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 
 	"github.com/donaldgifford/rex/internal/templates"
 )
@@ -29,49 +30,49 @@ func NewRexConfigurer(install bool) RexConfigurer {
 
 // RexConfig holds configuration from .rex.yaml
 type RexConfig struct {
-	ADR               ADRConfig
-	Templates         TemplateConfig
-	EnableGithubPages bool
-	Pages             PagesConfig
-	Extras            bool
-	ExtraPages        ExtrasConfig
+	ADR               ADRConfig      `yaml:"adr"`
+	Templates         TemplateConfig `yaml:"templates"`
+	EnableGithubPages bool           `yaml:"enable_github_pages"`
+	Pages             PagesConfig    `yaml:"pages"`
+	Extras            bool           `yaml:"extras"`
+	ExtraPages        ExtrasConfig   `yaml:"extra_pages"`
 }
 
 type ADRConfig struct {
-	Path       string
-	IndexPage  string
-	AddToIndex bool
+	Path       string `yaml:"path"`
+	IndexPage  string `yaml:"index_page"`
+	AddToIndex bool   `yaml:"add_to_index"`
 }
 
 type ADRTemplateConfig struct {
-	Default string
-	Index   string
+	Default string `yaml:"default"`
+	Index   string `yaml:"index"`
 }
 
 type TemplateConfig struct {
-	Enabled bool
-	Path    string
-	ADR     ADRTemplateConfig
+	Enabled bool              `yaml:"enabled"`
+	Path    string            `yaml:"path"`
+	ADR     ADRTemplateConfig `yaml:"adr"`
 }
 
 type PagesConfig struct {
-	Index string
-	Web   PagesConfigWeb
+	Index string         `yaml:"index"`
+	Web   PagesConfigWeb `yaml:"web"`
 }
 
 type PagesConfigWeb struct {
-	Config string
-	Layout PagesConfigWebLayout
+	Config string               `yaml:"config"`
+	Layout PagesConfigWebLayout `yaml:"layout"`
 }
 
 type PagesConfigWebLayout struct {
-	ADR     string
-	Default string
+	ADR     string `yaml:"adr"`
+	Default string `yaml:"default"`
 }
 
 type ExtrasConfig struct {
-	Install string
-	Usage   string
+	Install string `yaml:"install"`
+	Usage   string `yaml:"usage"`
 }
 
 // NewRexConfig creates an empty config object
@@ -227,5 +228,34 @@ func (rc *RexConfig) GenerateDirectories(force bool, index bool) error {
 }
 
 func (rc *RexConfig) GenerateIndex(force bool) error {
+	return nil
+}
+
+func (rc *RexConfig) YamlOut() error {
+	yamlData, err := yaml.Marshal(&rc)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(yamlData))
+	return nil
+}
+
+func (rc *RexConfig) YamlIn() error {
+	t, err := os.ReadFile(".rex.yaml")
+	if err != nil {
+		return err
+	}
+
+	var config RexConfig
+
+	err = yaml.Unmarshal(t, &config)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return err
+	}
+
+	fmt.Println(&config)
+
 	return nil
 }

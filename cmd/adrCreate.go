@@ -22,7 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -45,8 +44,6 @@ var adrCreateCmd = &cobra.Command{
 rex create -t "My ADR Title" -a "Donald Gifford"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("adrCreate called")
-
 		content := adr.Content{
 			Title:  title,
 			Author: author,
@@ -55,11 +52,15 @@ rex create -t "My ADR Title" -a "Donald Gifford"
 		}
 
 		rex := rex.NewRex(install)
-		rex.NewADR(&content)
-
-		err := rex.UpdateIndex()
+		// maybe return file name and location where it was created
+		err := rex.NewADR(&content)
 		if err != nil {
-			fmt.Println(err.Error())
+			cmd.Println(err.Error())
+		}
+
+		err = rex.UpdateIndex()
+		if err != nil {
+			cmd.Println(err.Error())
 		}
 	},
 }

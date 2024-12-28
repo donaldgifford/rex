@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/viper"
@@ -35,7 +36,8 @@ func (rc *RexConfInstall) Settings() *RexConfig {
 }
 
 func (rc *RexConfInstall) WriteConfig(file string) error {
-	fmt.Println("Creating new config file at .rex.yaml")
+	log.Printf("Creating new file: %v", file)
+	// fmt.Println("Creating new config file at .rex.yaml")
 
 	// get template to be used
 	rexConf, err := templates.DefaultRexTemplates.ReadFile(file)

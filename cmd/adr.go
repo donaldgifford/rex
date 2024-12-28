@@ -22,8 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +34,7 @@ var adrCmd = &cobra.Command{
 rex adr create -t "My Title" -a "User Name"
 rex adr list`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("adr called")
+		cmd.Print("adr called")
 	},
 }
 
