@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/donaldgifford/rex/internal/install"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -32,7 +33,6 @@ import (
 var (
 	cfgFile string
 	version = "0.0.1"
-	install = false
 	force   = false
 )
 
@@ -50,7 +50,8 @@ needed. Lastly, it can generate html from the templates to be hosted on somethin
 like Github Pages, helping with overall documentation workflows.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	// Run: func(cmd *cobra.Command, args []string) {
+	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -70,8 +71,6 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $CWD/.rex.yaml)")
-
-	rootCmd.PersistentFlags().BoolVarP(&install, "install", "i", false, "pass on first run when creating .rex.yaml config file")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -96,17 +95,13 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// if --install is passed, we ignore the config file missing since we are passing this flag to create a new config file on first run
-	if install {
-		// If a config file is found, read it in.
-		if err := viper.ReadInConfig(); err == nil {
-			fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	// if no config found, create one.
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println("Config file not found, creating one at .rex.yaml")
+		fmt.Println("Please rerun command")
+		if err := install.CreateRexConfigFile(); err != nil {
+			fmt.Println("Error creating rex.yaml file:", err.Error())
 		}
-	} else {
-		// if no config found, exit 1
-		if err := viper.ReadInConfig(); err != nil {
-			fmt.Fprintln(os.Stderr, "Config file not found, run: rex config generate --install to generate one", viper.ConfigFileUsed())
-			os.Exit(1)
-		}
+		os.Exit(1)
 	}
 }

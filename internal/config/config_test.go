@@ -244,130 +244,6 @@ func TestNewRexConfig(t *testing.T) {
 	}
 }
 
-func TestRexConfigConfigExists(t *testing.T) {}
-func TestRexReadConfig(t *testing.T) {
-	c := &RexConfig{
-		ADR: ADRConfig{
-			Path:       viper.GetString("adr.path"),
-			IndexPage:  viper.GetString("adr.index_page"),
-			AddToIndex: viper.GetBool("adr.add_to_index"),
-		},
-		Templates: TemplateConfig{
-			Enabled: viper.GetBool("templates.enabled"),
-			Path:    viper.GetString("templates.path"),
-			ADR: ADRTemplateConfig{
-				Default: viper.GetString("templates.adr.default"),
-				Index:   viper.GetString("templates.adr.index"),
-			},
-		},
-		EnableGithubPages: viper.GetBool("enable_github_pages"),
-		Pages: PagesConfig{
-			Index: viper.GetString("pages.index"),
-			Web: PagesConfigWeb{
-				Config: viper.GetString("pages.web.config"),
-				Layout: PagesConfigWebLayout{
-					ADR:     viper.GetString("pages.web.layout.adr"),
-					Default: viper.GetString("pages.web.layout.default"),
-				},
-			},
-		},
-		Extras: viper.GetBool("extras"),
-		ExtraPages: ExtrasConfig{
-			Install: viper.GetString("extra_pages.install"),
-			Usage:   viper.GetString("extra_pages.usage"),
-		},
-	}
-
-	rc := NewRexConfig()
-	rc.ReadConfig()
-	config := rc.Settings()
-
-	if config.ADR != c.ADR {
-		t.Errorf("ADR Settings dont match: %v, %v", config.ADR, c.ADR)
-	}
-
-	if config.Templates != c.Templates {
-		t.Errorf("Templates settings dont match: %v, %v", config.Templates, c.Templates)
-	}
-
-	if config.Pages != c.Pages {
-		t.Errorf("Pages settings dont match: %v, %v", config.Pages, c.Pages)
-	}
-}
-
-func TestRexConfigWriteFile(t *testing.T) {
-	tests := map[string]struct {
-		path     string
-		file     string
-		force    bool
-		expected []string
-		err      bool
-	}{
-		"good": {
-			path:     defaultAdrPath,
-			file:     "default/rex.yaml",
-			force:    false,
-			expected: []string{"1-test1.md", "2-test2.md"},
-			err:      false,
-		},
-		"bad_path": {
-			path:     "path/to/adrs",
-			file:     "default/rex-error.yaml",
-			force:    true,
-			expected: []string(nil),
-			err:      true,
-		},
-	}
-
-	for name, test := range tests {
-		t.Run(name, func(t *testing.T) {
-			a := NewRexConfig()
-			err := a.WriteConfig(test.file)
-			// assert.Equal(t, test.expected, actual, "")
-			if test.err {
-				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
-			} else {
-				assert.Nil(t, err, "")
-			}
-		})
-	}
-}
-
-func TestRexConfigGenereateConfig(t *testing.T) {
-	tests := map[string]struct {
-		path     string
-		force    bool
-		expected []string
-		err      bool
-	}{
-		"good": {
-			path:     defaultAdrPath,
-			force:    false,
-			expected: []string{"1-test1.md", "2-test2.md"},
-			err:      false,
-		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
-	}
-
-	for name, test := range tests {
-		t.Run(name, func(t *testing.T) {
-			a := NewRexConfig()
-			err := a.GenerateConfig(test.force)
-			// assert.Equal(t, test.expected, actual, "")
-			if test.err {
-				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
-			} else {
-				assert.Nil(t, err, "")
-			}
-		})
-	}
-}
-
 func TestRexConfigGenereateIndex(t *testing.T) {
 	tests := map[string]struct {
 		path     string
@@ -432,7 +308,7 @@ func TestRexConfigGenereateDirectories(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			a := NewRexConfig()
-			err := a.GenerateDirectories(test.force, test.index)
+			err := a.GenerateDirectories(test.force)
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
 			} else {

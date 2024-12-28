@@ -24,7 +24,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/donaldgifford/rex/internal/rex"
 	"github.com/spf13/cobra"
 )
 
@@ -40,14 +39,6 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("config called")
-		rex := rex.NewRex(install)
-		cmd.Println(rex.Settings())
-
-		err := rex.Settings().YamlIn()
-		// err := rex.Settings().YamlOut()
-		if err != nil {
-			cmd.Println(err.Error())
-		}
 	},
 }
 

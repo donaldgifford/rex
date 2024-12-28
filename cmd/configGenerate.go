@@ -22,8 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/donaldgifford/rex/internal/rex"
@@ -45,27 +43,21 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("configGenerate called")
+		// fmt.Println("configGenerate called")
 
-		rex := rex.NewRex(install)
-		cmd.Println(rex.Settings())
-
-		// create new config, if force, overwrite previous
-		err := rex.Config.GenerateConfig(force)
-		if err != nil {
-			cmd.Println(err.Error())
-		}
+		rex := rex.New()
+		// cmd.Println(rex.Settings())
 
 		// if --directories and --index set
-		if directories && index {
-			err := rex.Config.GenerateDirectories(force, index)
+		if directories {
+			err := rex.Config.GenerateDirectories(force)
 			if err != nil {
 				cmd.Println(err.Error())
 			}
 		}
 
 		// if just --index
-		if index && !directories {
+		if index {
 			err := rex.Config.GenerateIndex(force)
 			if err != nil {
 				cmd.Println(err.Error())

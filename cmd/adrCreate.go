@@ -51,7 +51,7 @@ rex create -t "My ADR Title" -a "Donald Gifford"
 			Date:   time.Now().Format(time.DateOnly),
 		}
 
-		rex := rex.NewRex(install)
+		rex := rex.New()
 		// maybe return file name and location where it was created
 		err := rex.NewADR(&content)
 		if err != nil {
