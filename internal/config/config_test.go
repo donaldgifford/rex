@@ -145,11 +145,11 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	err = removeTestConfigFile(".rex.yaml")
-	if err != nil {
-		log.Print(err)
-		os.Exit(1)
-	}
+	// err = removeTestConfigFile(".rex.yaml")
+	// if err != nil {
+	// 	log.Print(err)
+	// 	os.Exit(1)
+	// }
 	os.Exit(code)
 }
 

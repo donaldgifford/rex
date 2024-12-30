@@ -40,7 +40,7 @@ func TestAdrCreateCMD(t *testing.T) {
 	}{
 		"adr": {
 			file:    "tests/docs/adr/3-Test-ADR-Create.md",
-			content: "# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | 2024-12-27 | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
+			content: "# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | 2024-12-29 | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
 			// setArgs: []string{"--config=tests/.rex.yaml", "--title=Test ADR Create", "--author=TESTER"},
 			setArgs: []string{"--config=tests/.rex.yaml", "adr", "create", "--title=Test ADR Create", "--author=TESTER"},
 			err:     false,
