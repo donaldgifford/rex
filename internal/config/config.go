@@ -6,9 +6,8 @@ import (
 )
 
 type RexConfigure interface {
-	GenerateIndex(force bool) error
-	GenerateDirectories(force bool) error
 	Settings() *RexConfig
+	YamlOut() ([]byte, error)
 }
 
 func NewRexConfigure() RexConfigure {
@@ -100,14 +99,6 @@ func NewRexConfig() *RexConfig {
 // Settings exposes settings out to use in other calls
 func (rc *RexConfig) Settings() *RexConfig {
 	return rc
-}
-
-func (rc *RexConfig) GenerateDirectories(force bool) error {
-	return nil
-}
-
-func (rc *RexConfig) GenerateIndex(force bool) error {
-	return nil
 }
 
 func (rc *RexConfig) YamlOut() ([]byte, error) {

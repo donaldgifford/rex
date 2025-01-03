@@ -7,11 +7,7 @@ import (
 	"testing"
 
 	"github.com/spf13/viper"
-
-	"github.com/stretchr/testify/assert"
 )
-
-// var adrDocsPath string
 
 var (
 	defaultAdrPath               string
@@ -145,11 +141,6 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	// err = removeTestConfigFile(".rex.yaml")
-	// if err != nil {
-	// 	log.Print(err)
-	// 	os.Exit(1)
-	// }
 	os.Exit(code)
 }
 
@@ -183,13 +174,6 @@ func (m *MockRexConfig) Settings() *RexConfig {
 	return nil
 }
 
-// ConfigExists() bool
-//
-//	ReadConfig() error
-//	GenerateConfig(force bool) error
-//	GenerateIndex() error
-//	GenerateDirectories(force bool, index bool) error
-//	Settings() *RexConfig
 type MockRexConfigInstall struct{}
 
 /*
@@ -241,80 +225,6 @@ func TestNewRexConfig(t *testing.T) {
 
 	if config.Pages != c.Pages {
 		t.Errorf("Pages settings dont match: %v, %v", config.Pages, c.Pages)
-	}
-}
-
-func TestRexConfigGenereateIndex(t *testing.T) {
-	tests := map[string]struct {
-		path     string
-		force    bool
-		index    bool
-		expected []string
-		err      bool
-	}{
-		"good": {
-			path:     defaultAdrPath,
-			force:    false,
-			index:    true,
-			expected: []string{"1-test1.md", "2-test2.md"},
-			err:      false,
-		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
-	}
-
-	for name, test := range tests {
-		t.Run(name, func(t *testing.T) {
-			a := NewRexConfig()
-			err := a.GenerateIndex(test.force)
-			if test.err {
-				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
-			} else {
-				assert.Nil(t, err, "")
-			}
-		})
-	}
-}
-
-func TestRexConfigGenereateDirectories(t *testing.T) {
-	tests := map[string]struct {
-		path     string
-		force    bool
-		index    bool
-		expected []string
-		err      bool
-	}{
-		"good": {
-			path:     defaultAdrPath,
-			force:    false,
-			index:    true,
-			expected: []string{"1-test1.md", "2-test2.md"},
-			err:      false,
-		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
-	}
-
-	for name, test := range tests {
-		t.Run(name, func(t *testing.T) {
-			a := NewRexConfig()
-			err := a.GenerateDirectories(test.force)
-			if test.err {
-				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
-			} else {
-				assert.Nil(t, err, "")
-			}
-		})
 	}
 }
 

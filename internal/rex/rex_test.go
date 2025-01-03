@@ -33,14 +33,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// var adrDocsPath string
-
-// func viperSetHelper(path string, indexPage string, addToIndex bool) {
-// 	viper.Set("adr.path", path)
-// 	viper.Set("adr.index_page", indexPage)
-// 	viper.Set("adr.add_to_index", addToIndex)
-// }
-
 var (
 	defaultAdrPath               string
 	defaultAdrIndexPage          string
@@ -292,6 +284,47 @@ func TestRexNewAdr(t *testing.T) {
 	}
 }
 
+func TestRexConfigGenereateIndex(t *testing.T) {
+	tests := map[string]struct {
+		configPath  string
+		configIndex string
+		configAdd   bool
+		expected    []string
+		err         bool
+	}{
+		"good": {
+			configPath:  defaultAdrPath,
+			configIndex: "README.md",
+			configAdd:   true,
+			expected:    []string{"1-test1.md", "2-test2.md"},
+			err:         false,
+		},
+		// "bad_path": {
+		// 	path:     "path/to/adrs",
+		// 	force:    true,
+		// 	index:    true,
+		// 	expected: []string(nil),
+		// 	err:      true,
+		// },
+	}
+
+	for name, test := range tests {
+		viper.Set("adr.path", test.configPath)
+		viper.Set("adr.index_page", test.configIndex)
+		viper.Set("adr.add_to_index", test.configAdd)
+
+		r := New()
+		err := r.GenerateIndex()
+		t.Run(name, func(t *testing.T) {
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
+			}
+		})
+	}
+}
+
 func TestRexUpdateIndex(t *testing.T) {
 	// not really a good test on most these, need to setup mocks
 	tests := map[string]struct {
@@ -323,6 +356,47 @@ func TestRexUpdateIndex(t *testing.T) {
 		err := r.UpdateIndex()
 
 		t.Run(name, func(t *testing.T) {
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
+			}
+		})
+	}
+}
+
+func TestRexConfigGenereateDirectories(t *testing.T) {
+	tests := map[string]struct {
+		configPath  string
+		configIndex string
+		configAdd   bool
+		expected    []string
+		err         bool
+	}{
+		"good": {
+			configPath: "tests/gen/docs/adr",
+			// configPath:  defaultAdrPath,
+			configIndex: "README.md",
+			configAdd:   true,
+			expected:    []string{"1-test1.md", "2-test2.md"},
+			err:         false,
+		},
+		// "bad_path": {
+		// 	path:     "path/to/adrs",
+		// 	force:    true,
+		// 	index:    true,
+		// 	expected: []string(nil),
+		// 	err:      true,
+		// },
+	}
+
+	for name, test := range tests {
+		viper.Set("adr.path", test.configPath)
+		viper.Set("adr.index_page", test.configIndex)
+		viper.Set("adr.add_to_index", test.configAdd)
+		t.Run(name, func(t *testing.T) {
+			a := New()
+			err := a.GenerateDirectories()
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
 			} else {

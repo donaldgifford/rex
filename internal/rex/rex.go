@@ -23,6 +23,9 @@ THE SOFTWARE.
 package rex
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/config"
 	"github.com/donaldgifford/rex/internal/templates"
@@ -72,5 +75,36 @@ func (r *Rex) UpdateIndex() error {
 
 	idx := r.Index.Execute()
 	err = r.Template.GenerateIndex(idx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Rex) GenerateDirectories() error {
+	// get current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	// create directory path string
+	dirPath := fmt.Sprintf("%s/%s", cwd, r.ADR.GetSettings().Path)
+
+	// mkdirall with path string
+	err = os.MkdirAll(dirPath, 0750)
+	if err != nil && !os.IsExist(err) {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Rex) GenerateIndex() error {
+	err := r.Template.GenerateIndex(r.Index.Execute())
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

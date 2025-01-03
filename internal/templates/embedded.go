@@ -56,8 +56,8 @@ func (et *EmbeddedTemplate) Read(file string) ([]byte, error) {
 	return t, nil
 }
 
-func (et *EmbeddedTemplate) Execute()             {}
-func (et *EmbeddedTemplate) GenerateDirectories() {}
+func (et *EmbeddedTemplate) Execute() {}
+
 func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 	// get settings for file path and name
 	// parse the template with Settings

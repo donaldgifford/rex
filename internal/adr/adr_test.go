@@ -250,7 +250,6 @@ func TestNewADRCreate(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.configPath, test.configIndex, test.configAdd)
 		viper.Set("adr.path", test.configPath)
 		viper.Set("adr.index_page", test.configIndex)
 		viper.Set("adr.add_to_index", test.configAdd)
@@ -299,7 +298,6 @@ func TestADRGetSettings(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.path, test.index, test.add)
 		viper.Set("adr.path", test.path)
 		viper.Set("adr.index_page", test.index)
 		viper.Set("adr.add_to_index", test.add)
@@ -339,7 +337,6 @@ func TestId(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.configPath, test.configIndex, test.configAdd)
 		viper.Set("adr.path", test.configPath)
 		viper.Set("adr.index_page", test.configIndex)
 		viper.Set("adr.add_to_index", test.configAdd)
@@ -376,7 +373,6 @@ func TestNewIADR(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.path, test.index, test.add)
 		viper.Set("adr.path", test.path)
 		viper.Set("adr.index_page", test.index)
 		viper.Set("adr.add_to_index", test.add)

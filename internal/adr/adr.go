@@ -137,7 +137,6 @@ func (adr *ADR) Create(content *Content) (*ADR, error) {
 			Author: content.Author,
 			Status: content.Status,
 			Date:   content.Date,
-			// Date:   time.Now().Format(time.DateOnly),
 		},
 		ID: adrId,
 	}, nil

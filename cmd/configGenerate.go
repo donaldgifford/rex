@@ -36,21 +36,20 @@ var (
 var configGenerateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate and install config files, directories, etc",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Generate allos you to install directories and files used 
+for rex. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Create directories listed from .rex.yaml config file:
+  rex config generate --directories
+
+Create index listed from .rex.yaml config file:
+  rex config generate --index`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// fmt.Println("configGenerate called")
-
 		rex := rex.New()
-		// cmd.Println(rex.Settings())
 
 		// if --directories and --index set
 		if directories {
-			err := rex.Config.GenerateDirectories(force)
+			err := rex.GenerateDirectories()
 			if err != nil {
 				cmd.Println(err.Error())
 			}
@@ -58,7 +57,7 @@ to quickly create a Cobra application.`,
 
 		// if just --index
 		if index {
-			err := rex.Config.GenerateIndex(force)
+			err := rex.GenerateIndex()
 			if err != nil {
 				cmd.Println(err.Error())
 			}
@@ -68,16 +67,6 @@ to quickly create a Cobra application.`,
 
 func init() {
 	configCmd.AddCommand(configGenerateCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configGenerateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configGenerateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	configGenerateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
 	configGenerateCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")

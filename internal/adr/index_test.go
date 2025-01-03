@@ -53,7 +53,6 @@ func TestNewIIndex(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.path, "README.md", true)
 		viper.Set("adr.path", test.path)
 		viper.Set("adr.index_page", "README.md")
 		viper.Set("adr.add_to_index", true)
@@ -71,8 +70,6 @@ func TestNewIIndex(t *testing.T) {
 		})
 	}
 }
-
-// func TestIndexExecute(t *testing.T) {}
 
 func TestIndexProcess(t *testing.T) {
 	tests := map[string]struct {
@@ -108,7 +105,6 @@ func TestIndexProcess(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.path, "README.md", true)
 		viper.Set("adr.path", test.path)
 		viper.Set("adr.index_page", "README.md")
 		viper.Set("adr.add_to_index", true)
@@ -160,7 +156,6 @@ func TestIndexADRs(t *testing.T) {
 	}
 
 	for name, test := range tests {
-		// viperSetHelper(test.path, test.index, true)
 		viper.Set("adr.path", test.path)
 		viper.Set("adr.index_page", test.index)
 		viper.Set("adr.add_to_index", true)

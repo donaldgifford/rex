@@ -27,9 +27,16 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func parseContentWithDate(content string) string {
+	d := time.Now()
+	formattedDate := d.Format("2006-01-02")
+	return fmt.Sprintf(content, formattedDate)
+}
 
 func TestAdrCreateCMD(t *testing.T) {
 	tests := map[string]struct {
@@ -40,8 +47,7 @@ func TestAdrCreateCMD(t *testing.T) {
 	}{
 		"adr": {
 			file:    "tests/docs/adr/3-Test-ADR-Create.md",
-			content: "# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | 2024-12-29 | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
-			// setArgs: []string{"--config=tests/.rex.yaml", "--title=Test ADR Create", "--author=TESTER"},
+			content: parseContentWithDate("# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n"),
 			setArgs: []string{"--config=tests/.rex.yaml", "adr", "create", "--title=Test ADR Create", "--author=TESTER"},
 			err:     false,
 		},
@@ -58,10 +64,7 @@ func TestAdrCreateCMD(t *testing.T) {
 			buf := new(bytes.Buffer)
 			rootCmd.SetOut(buf)
 			rootCmd.SetArgs(test.setArgs)
-			// adrCreateCmd.SetOut(buf)
-			// adrCreateCmd.SetArgs(test.setArgs)
 
-			// err := adrCreateCmd.Execute()
 			err := rootCmd.Execute()
 			if err != nil {
 				fmt.Println(err)
@@ -72,12 +75,6 @@ func TestAdrCreateCMD(t *testing.T) {
 				t.Errorf("error opening test file: %v, err: %v", test.file, err.Error())
 			}
 			assert.Equal(t, test.content, string(b), "")
-
-			// if test.err {
-			// 	assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
-			// } else {
-			// 	assert.Nil(t, err, "")
-			// }
 		})
 	}
 
