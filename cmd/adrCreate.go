@@ -19,10 +19,55 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"time"
 
-func main() {
-	cmd.Execute()
+	"github.com/spf13/cobra"
+
+	"github.com/donaldgifford/rex/internal/adr"
+	"github.com/donaldgifford/rex/internal/rex"
+)
+
+var (
+	title  string
+	author string
+)
+
+// adrCreateCmd represents the adrCreate command
+var adrCreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a new ADR",
+	Long: `Create a new ADR in the path specified in the .rex.yaml config. For example:
+
+rex create -t "My ADR Title" -a "Donald Gifford"
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		content := adr.Content{
+			Title:  title,
+			Author: author,
+			Status: "Draft",
+			Date:   time.Now().Format(time.DateOnly),
+		}
+
+		rex := rex.New()
+		// maybe return file name and location where it was created
+		err := rex.NewADR(&content)
+		if err != nil {
+			cmd.Println(err.Error())
+		}
+
+		err = rex.UpdateIndex()
+		if err != nil {
+			cmd.Println(err.Error())
+		}
+	},
+}
+
+func init() {
+	adrCmd.AddCommand(adrCreateCmd)
+
+	adrCreateCmd.Flags().StringVarP(&title, "title", "t", "", "Title for ADR")
+	adrCreateCmd.Flags().StringVarP(&author, "author", "a", "", "Author for ADR")
 }

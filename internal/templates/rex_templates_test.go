@@ -19,10 +19,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package templates
 
-import "github.com/donaldgifford/rex/cmd"
+import "testing"
 
-func main() {
-	cmd.Execute()
-}
+func TestRexGetSettings(t *testing.T)    {}
+func TestRexRead(t *testing.T)           {}
+func TestRexExecute(t *testing.T)        {}
+func TestRexCreateADR(t *testing.T)      {}
+func TestRexGenereateIndex(t *testing.T) {}

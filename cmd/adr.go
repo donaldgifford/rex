@@ -19,10 +19,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"github.com/spf13/cobra"
+)
 
-func main() {
-	cmd.Execute()
+// adrCmd represents the adr command
+var adrCmd = &cobra.Command{
+	Use:   "adr",
+	Short: "Commands for ADR functions",
+	Long: `Create and List ADR's:
+
+rex adr create -t "My Title" -a "User Name"
+rex adr list`,
+}
+
+func init() {
+	rootCmd.AddCommand(adrCmd)
 }

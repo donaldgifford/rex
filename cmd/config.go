@@ -19,10 +19,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"github.com/spf13/cobra"
+)
 
-func main() {
-	cmd.Execute()
+// configCmd represents the config command
+var configCmd = &cobra.Command{
+	Use:   "config",
+	Short: "Configuration options and commands",
+	Long: `config has 1 sub commands with 2 options:
+
+These subcommands allow you to configure your repo 
+with the settings that are listed in .rex.yaml`,
+}
+
+func init() {
+	rootCmd.AddCommand(configCmd)
 }
