@@ -22,6 +22,7 @@ type RexConfig struct {
 	Pages             PagesConfig    `yaml:"pages"`
 	Extras            bool           `yaml:"extras"`
 	ExtraPages        ExtrasConfig   `yaml:"extra_pages"`
+	cwd               string
 }
 
 type ADRConfig struct {

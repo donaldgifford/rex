@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,37 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"github.com/donaldgifford/rex/internal/rex"
 	"github.com/spf13/cobra"
 )
 
-// configGenerateCmd represents the configGenerate command
-var configGenerateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate and install config files, directories, and templates",
-	Long: `Generate provides commands for you to install directories, files, and
-templates used for rex. 
+// generateIndexCmd represents the generateIndex command
+var generateIndexCmd = &cobra.Command{
+	Use:   "index",
+	Short: "index creates or regenerates the index for rex",
+	Long: `index will regenerate the index file set for rex. If the 
+index isn't found in the configured location, it will create it. 
 
-If you have "templates.enabled: true" in your .rex.yaml config 
-file then the subcommands will use those settings. If not, the defaults
-are used.`,
+Create index listed from .rex.yaml config file:
+  rex config generate index
+
+Regenerate index listed from .rex.yaml config file:
+  rex config generate index --force
+
+The index subcommand looks at the .rex.yaml config file to 
+see where to save the index file, name, and what template to use.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		rex := rex.New()
+
+		err := rex.GenerateIndex(force)
+		if err != nil {
+			cmd.Println(err.Error())
+		}
+	},
 }
 
 func init() {
-	configCmd.AddCommand(configGenerateCmd)
+	configGenerateCmd.AddCommand(generateIndexCmd)
+
+	generateIndexCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
 }

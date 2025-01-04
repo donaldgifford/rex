@@ -58,7 +58,8 @@ rex create -t "My ADR Title" -a "Donald Gifford"
 			cmd.Println(err.Error())
 		}
 
-		err = rex.UpdateIndex()
+		// UpdateIndex always tries to update and regenerate the index
+		err = rex.UpdateIndex(true)
 		if err != nil {
 			cmd.Println(err.Error())
 		}

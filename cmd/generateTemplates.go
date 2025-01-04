@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,40 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"github.com/donaldgifford/rex/internal/rex"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// configGenerateCmd represents the configGenerate command
-var configGenerateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate and install config files, directories, and templates",
-	Long: `Generate provides commands for you to install directories, files, and
-templates used for rex. 
+// generateTemplatesCmd represents the generateTemplates command
+var generateTemplatesCmd = &cobra.Command{
+	Use:   "templates",
+	Short: "create templates for rex",
+	Long: `templates subcommand creates the default templates files for rex.
+This subcommand only works if "templates.enabled: true" in your .rex.yaml 
+config file.
 
-If you have "templates.enabled: true" in your .rex.yaml config 
-file then the subcommands will use those settings. If not, the defaults
-are used.`,
+Create templates listed from .rex.yaml config file:
+  rex config generate templates 
+
+Passing '--force, -f' will overwrite the templates if files 
+are found.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if !viper.GetBool("templates.enabled") {
+			cmd.Println("templates.enabled not set to true")
+			return
+		}
+		rex := rex.New()
+
+		err := rex.GenerateTemplates(force)
+		if err != nil {
+			cmd.Println(err.Error())
+		}
+	},
 }
 
 func init() {
-	configCmd.AddCommand(configGenerateCmd)
+	configGenerateCmd.AddCommand(generateTemplatesCmd)
+
+	generateTemplatesCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
 }

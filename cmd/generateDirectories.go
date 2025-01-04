@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,12 +19,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package templates
+package cmd
 
-import "testing"
+import (
+	"github.com/donaldgifford/rex/internal/rex"
+	"github.com/spf13/cobra"
+)
 
-func TestRexGetSettings(t *testing.T)    {}
-func TestRexRead(t *testing.T)           {}
-func TestRexExecute(t *testing.T)        {}
-func TestRexCreateADR(t *testing.T)      {}
-func TestRexGenereateIndex(t *testing.T) {}
+// generateDirectoriesCmd represents the generateDirectories command
+var generateDirectoriesCmd = &cobra.Command{
+	Use:   "directories",
+	Short: "Create directories used by rex",
+	Long: `directories subcommand will create the directories needed 
+for rex based on your .rex.yaml config file. For example:
+
+Create directories listed from .rex.yaml config file:
+  rex config generate directories
+
+If "templates.enabled: true" in your .rex.yaml config file then the 
+directories subcommand will create the directories listed in your config 
+at "templates.path".`,
+	Run: func(cmd *cobra.Command, args []string) {
+		rex := rex.New()
+
+		err := rex.GenerateDirectories()
+		if err != nil {
+			cmd.Println(err.Error())
+		}
+	},
+}
+
+func init() {
+	configGenerateCmd.AddCommand(generateDirectoriesCmd)
+}

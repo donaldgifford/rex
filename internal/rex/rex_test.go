@@ -290,14 +290,24 @@ func TestRexConfigGenereateIndex(t *testing.T) {
 		configIndex string
 		configAdd   bool
 		expected    []string
+		force       bool
 		err         bool
 	}{
-		"good": {
+		"good_force": {
 			configPath:  defaultAdrPath,
 			configIndex: "README.md",
 			configAdd:   true,
 			expected:    []string{"1-test1.md", "2-test2.md"},
+			force:       true,
 			err:         false,
+		},
+		"error_force_false": {
+			configPath:  defaultAdrPath,
+			configIndex: "README.md",
+			configAdd:   true,
+			expected:    []string{"1-test1.md", "2-test2.md"},
+			force:       false,
+			err:         true,
 		},
 		// "bad_path": {
 		// 	path:     "path/to/adrs",
@@ -314,7 +324,7 @@ func TestRexConfigGenereateIndex(t *testing.T) {
 		viper.Set("adr.add_to_index", test.configAdd)
 
 		r := New()
-		err := r.GenerateIndex()
+		err := r.GenerateIndex(test.force)
 		t.Run(name, func(t *testing.T) {
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
@@ -331,18 +341,21 @@ func TestRexUpdateIndex(t *testing.T) {
 		configPath  string
 		configIndex string
 		configAdd   bool
+		force       bool
 		err         bool
 	}{
 		"good": {
 			configPath:  defaultAdrPath,
 			configIndex: "README.md",
 			configAdd:   true,
+			force:       true,
 			err:         false,
 		},
 		"error": {
 			configPath:  "/path/to/adr",
 			configIndex: "README.md",
 			configAdd:   true,
+			force:       true,
 			err:         true,
 		},
 	}
@@ -353,7 +366,7 @@ func TestRexUpdateIndex(t *testing.T) {
 		viper.Set("adr.add_to_index", test.configAdd)
 
 		r := New()
-		err := r.UpdateIndex()
+		err := r.UpdateIndex(test.force)
 
 		t.Run(name, func(t *testing.T) {
 			if test.err {

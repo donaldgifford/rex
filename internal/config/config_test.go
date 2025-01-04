@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -49,7 +50,7 @@ func initDefaultConfig() {
 	defaultAdrPath = "tests/docs/adr/"
 	defaultAdrIndexPage = "README.md"
 	defaultAdrAddToIndex = true
-	defaultTemplatesPath = "templates/"
+	defaultTemplatesPath = "tests/docs/templates/"
 	defaultTemplatesEnabled = false
 	defaultTemplatesAdrDefault = "adr.tmpl"
 	defaultTemplatesAdrIndex = "index.tmpl"
@@ -98,8 +99,39 @@ func removeTestConfigFile(name string) error {
 
 func TestMain(m *testing.M) {
 	adrDocsPath := "tests/docs/adr/"
+	templatesPath := "tests/docs/templates/"
 
 	err := createTestFolder(adrDocsPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath + "poop/adr/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestADRFile(fmt.Sprintf("%s%s", templatesPath+"poop/adr/", "adr.tmpl"))
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath + "poop/index/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestADRFile(fmt.Sprintf("%s%s", templatesPath+"poop/index/", "index.tmpl"))
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -145,40 +177,45 @@ func TestMain(m *testing.M) {
 }
 
 /*
-* Mocks
- */
-
-type MockRexConfig struct{}
-
-func (m *MockRexConfig) ConfigExists() bool {
-	return true
-}
-
-func (m *MockRexConfig) ReadConfig() error {
-	return nil
-}
-
-func (m *MockRexConfig) GenerateConfig(force bool) error {
-	return nil
-}
-
-func (m *MockRexConfig) GenerateIndex() error {
-	return nil
-}
-
-func (m *MockRexConfig) GenerateDirectories(force bool, index bool) error {
-	return nil
-}
-
-func (m *MockRexConfig) Settings() *RexConfig {
-	return nil
-}
-
-type MockRexConfigInstall struct{}
-
-/*
 * Acutal Tests
  */
+
+func TestRexConfig_NewRexConfigure(t *testing.T) {
+	tests := map[string]struct {
+		cwd      string
+		expected string
+		err      bool
+	}{
+		"output": {
+			cwd:      "",
+			expected: "adr:\n    path: tests/docs/adr/\n    index_page: README.md\n    add_to_index: true\ntemplates:\n    enabled: false\n    path: tests/docs/templates/\n    adr:\n        default: adr.tmpl\n        index: index.tmpl\nenable_github_pages: true\npages:\n    index: index.md\n    web:\n        config: _config.yml\n        layout:\n            adr: adr.html\n            default: default.html\nextras: true\nextra_pages:\n    install: install.md\n    usage: usage.md\n",
+			err:      false,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			r := NewRexConfigure()
+			if test.cwd == "" {
+				r.Settings().setCWD()
+			} else {
+				r.Settings().cwd = test.cwd
+			}
+			b, err := r.YamlOut()
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
+				assert.Equal(t, test.expected, string(b))
+				// assert.Equal(t, true, directoryExists(r.cwd+"/"+test.configPath))
+				//
+				// if test.templatesEnabled {
+				// 	assert.Equal(t, true, directoryExists(r.cwd+"/"+test.templatesPath))
+				// }
+			}
+		})
+	}
+}
 
 func TestNewRexConfig(t *testing.T) {
 	c := &RexConfig{
@@ -274,5 +311,42 @@ func TestRexConfigSettings(t *testing.T) {
 
 	if config.Pages != c.Pages {
 		t.Errorf("Pages settings dont match: %v, %v", config.Pages, c.Pages)
+	}
+}
+
+func TestRexConfig_YamlOut(t *testing.T) {
+	tests := map[string]struct {
+		cwd      string
+		expected string
+		err      bool
+	}{
+		"output": {
+			cwd:      "",
+			expected: "adr:\n    path: tests/docs/adr/\n    index_page: README.md\n    add_to_index: true\ntemplates:\n    enabled: false\n    path: tests/docs/templates/\n    adr:\n        default: adr.tmpl\n        index: index.tmpl\nenable_github_pages: true\npages:\n    index: index.md\n    web:\n        config: _config.yml\n        layout:\n            adr: adr.html\n            default: default.html\nextras: true\nextra_pages:\n    install: install.md\n    usage: usage.md\n",
+			err:      false,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			r := NewRexConfig()
+			if test.cwd == "" {
+				r.setCWD()
+			} else {
+				r.cwd = test.cwd
+			}
+			b, err := r.YamlOut()
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
+				assert.Equal(t, test.expected, string(b))
+				// assert.Equal(t, true, directoryExists(r.cwd+"/"+test.configPath))
+				//
+				// if test.templatesEnabled {
+				// 	assert.Equal(t, true, directoryExists(r.cwd+"/"+test.templatesPath))
+				// }
+			}
+		})
 	}
 }

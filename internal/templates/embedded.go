@@ -90,7 +90,29 @@ func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 	return nil
 }
 
-func (et *EmbeddedTemplate) GenerateIndex(idx *adr.Index) error {
+func (et *EmbeddedTemplate) GenerateIndex(idx *adr.Index, force bool) error {
+	if force {
+		err := et.writeIndex(idx)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if fileExists(idx.DocPath + idx.IndexFileName) {
+		return fmt.Errorf("index file found at %s, to overwrite please pass --force flag", idx.DocPath+idx.IndexFileName)
+	}
+
+	err := et.writeIndex(idx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (et *EmbeddedTemplate) writeIndex(idx *adr.Index) error {
 	tmpl, err := template.ParseFS(DefaultRexTemplates, fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.IndexTemplate))
 	if err != nil {
 		return err
@@ -111,6 +133,5 @@ func (et *EmbeddedTemplate) GenerateIndex(idx *adr.Index) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	return nil
 }

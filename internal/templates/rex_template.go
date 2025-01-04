@@ -23,12 +23,16 @@ package templates
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	"text/template"
+
+	"github.com/spf13/viper"
 
 	"github.com/donaldgifford/rex/internal/adr"
 )
-
-// TODO: add custom template generation later
-var configDefaultAdrTemplate string = "templates.adr.default"
 
 type RexTemplate struct {
 	Settings Settings
@@ -41,21 +45,88 @@ func (rt *RexTemplate) GetSettings() *Settings {
 
 // "default/rex.yaml"
 // TODO: Change to read from disk - settings in .rex.yaml
+// still not sure why i need this
 func (rt *RexTemplate) Read(file string) ([]byte, error) {
-	t, err := DefaultRexTemplates.ReadFile(file)
+	cleanFile := filepath.Clean(file)
+	t, err := os.ReadFile(cleanFile)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(t))
 	return t, nil
 }
 
 func (rt *RexTemplate) Execute() {}
 
 func (rt *RexTemplate) CreateADR(adr *adr.ADR) error {
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s%s", rt.Settings.TemplatePath, rt.Settings.AdrTemplate))
+	if err != nil {
+		return err
+	}
+
+	strippedTitle := strings.Join(strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "), "-")
+	fileName := fmt.Sprintf("%d-%s.md", adr.ID, strippedTitle)
+
+	var f *os.File
+	cleanFile := filepath.Clean(fmt.Sprintf("%s%s", viper.GetString("adr.path"), fileName))
+	f, err = os.Create(cleanFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = tmpl.Execute(f, adr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = f.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }
 
-func (rt *RexTemplate) GenerateIndex(idx *adr.Index) error {
+func (rt *RexTemplate) GenerateIndex(idx *adr.Index, force bool) error {
+	if force {
+		err := rt.writeIndex(idx)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if fileExists(idx.DocPath + idx.IndexFileName) {
+		return fmt.Errorf("index file found at %s, to overwrite please pass --force flag", idx.DocPath+idx.IndexFileName)
+	}
+
+	err := rt.writeIndex(idx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rt *RexTemplate) writeIndex(idx *adr.Index) error {
+	tmpl, err := template.ParseFiles(fmt.Sprintf("%s%s", rt.Settings.TemplatePath, rt.Settings.IndexTemplate))
+	if err != nil {
+		return err
+	}
+
+	var f *os.File
+	f, err = os.Create(idx.DocPath + idx.IndexFileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = tmpl.Execute(f, idx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = f.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }

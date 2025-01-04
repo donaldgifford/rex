@@ -23,9 +23,6 @@ THE SOFTWARE.
 package rex
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/config"
 	"github.com/donaldgifford/rex/internal/templates"
@@ -67,41 +64,51 @@ func (r *Rex) NewADR(content *adr.Content) error {
 	return nil
 }
 
-func (r *Rex) UpdateIndex() error {
+func (r *Rex) UpdateIndex(force bool) error {
 	err := r.Index.ADRs()
 	if err != nil {
 		return err
 	}
 
 	idx := r.Index.Execute()
-	err = r.Template.GenerateIndex(idx)
+	err = r.Template.GenerateIndex(idx, force)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// GenerateDirectories creates the default directories used for rex
+// force is used to overwrite the templates if found
+//
+// if "templates.enabled: true" is the .rex.yaml config file
+// then this function creates the default templates directory
 func (r *Rex) GenerateDirectories() error {
-	// get current working directory
-	cwd, err := os.Getwd()
+	err := r.Config.Settings().GenerateDirectories()
 	if err != nil {
 		return err
 	}
-
-	// create directory path string
-	dirPath := fmt.Sprintf("%s/%s", cwd, r.ADR.GetSettings().Path)
-
-	// mkdirall with path string
-	err = os.MkdirAll(dirPath, 0750)
-	if err != nil && !os.IsExist(err) {
-		return err
-	}
-
 	return nil
 }
 
-func (r *Rex) GenerateIndex() error {
-	err := r.Template.GenerateIndex(r.Index.Execute())
+// GenerateDefaultTemplates creates the default templates used for rex
+//
+// if force is set, it will overwrite the current template files if
+// found with the defaults
+func (r *Rex) GenerateTemplates(force bool) error {
+	err := r.Config.Settings().GenerateDefaultTemplates(force)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GenerateIndex updates the current index
+//
+// if force is set, it will overwrite the current index file if
+// found.
+func (r *Rex) GenerateIndex(force bool) error {
+	err := r.Template.GenerateIndex(r.Index.Execute(), force)
 	if err != nil {
 		return err
 	}

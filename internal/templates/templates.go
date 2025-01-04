@@ -34,6 +34,8 @@ THE SOFTWARE.
 package templates
 
 import (
+	"os"
+
 	"github.com/spf13/viper"
 
 	"github.com/donaldgifford/rex/internal/adr"
@@ -44,7 +46,7 @@ type Template interface {
 	Execute()                         // Execute the template with passed in configuration variables
 	GetSettings() *Settings
 	CreateADR(adr *adr.ADR) error
-	GenerateIndex(idx *adr.Index) error
+	GenerateIndex(idx *adr.Index, force bool) error
 }
 
 func NewTemplate() Template {
@@ -71,4 +73,13 @@ type Settings struct {
 	TemplatePath  string
 	AdrTemplate   string
 	IndexTemplate string
+}
+
+// fileExists returns checks if a file already exists on disk
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
