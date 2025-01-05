@@ -16,7 +16,7 @@ jobs:
       #   run: echo ${{ DISCORD_WEBHOOK_ID }}
 
       - name: set discord webhook id out3
-        run: echo ${{ env.DISCORD_WEBHOOK_ID }}
+        run: echo ${{ vars.DISCORD_WEBHOOK_ID }}
 
       - name: Environment Printer
         uses: managedkaos/print-env@v1.0
