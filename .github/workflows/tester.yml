@@ -1,0 +1,25 @@
+name: Test stuff
+on:
+  push:
+
+jobs:
+  test-env-vars:
+    name: Test env vars
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set discord webhook id out
+        run: echo $DISCORD_WEBHOOK_ID
+
+      - name: set discord webhook id out2
+        run: echo ${DISCORD_WEBHOOK_ID}
+
+      - name: set discord webhook id out3
+        run: echo ${env.DISCORD_WEBHOOK_ID}
+
+      - name: set discord webhook id
+        run: echo DISCORD_WEBHOOK_ID=$(echo ${env.DISCORD_WEBHOOK_ID} >> ${GITHUB_ENV}
+
+      - name: Environment Printer
+        uses: managedkaos/print-env@v1.0
