@@ -12,8 +12,8 @@ jobs:
       - name: set discord webhook id out
         run: echo $DISCORD_WEBHOOK_ID
 
-      - name: set discord webhook id out2
-        run: echo ${{ DISCORD_WEBHOOK_ID }}
+      # - name: set discord webhook id out2
+      #   run: echo ${{ DISCORD_WEBHOOK_ID }}
 
       - name: set discord webhook id out3
         run: echo ${{ env.DISCORD_WEBHOOK_ID }}
