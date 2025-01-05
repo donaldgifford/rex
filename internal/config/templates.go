@@ -37,25 +37,6 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-// writeTemplateFile writes a template to disk
-func (r *RexConfig) writeTemplateFile(file []byte, templateType string) error {
-	templateFile, err := os.Create(fmt.Sprintf("%s%s", r.Templates.Path, templateType))
-	if err != nil {
-		return err
-	}
-
-	_, err = templateFile.Write(file)
-	if err != nil {
-		return err
-	}
-
-	err = templateFile.Close()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // GenerateDefaultTemplates creates the default templates used for rex
 //
 // if force is set, it will overwrite the current template files if
@@ -123,5 +104,24 @@ func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTe
 		return err
 	}
 
+	return nil
+}
+
+// writeTemplateFile writes a template to disk
+func (r *RexConfig) writeTemplateFile(file []byte, templateType string) error {
+	templateFile, err := os.Create(fmt.Sprintf("%s%s", r.Templates.Path, templateType))
+	if err != nil {
+		return err
+	}
+
+	_, err = templateFile.Write(file)
+	if err != nil {
+		return err
+	}
+
+	err = templateFile.Close()
+	if err != nil {
+		return err
+	}
 	return nil
 }

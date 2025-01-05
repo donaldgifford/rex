@@ -40,6 +40,7 @@ If "templates.enabled: true" in your .rex.yaml config file then the
 directories subcommand will create the directories listed in your config 
 at "templates.path".`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// init rex
 		rex := rex.New()
 
 		err := rex.GenerateDirectories()

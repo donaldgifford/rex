@@ -41,14 +41,17 @@ Create templates listed from .rex.yaml config file:
 Passing '--force, -f' will overwrite the templates if files 
 are found.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// check to see if templates are enabled
+		// if they aren't we exit since we dont need
+		// template files unless this is enabled
 		if !viper.GetBool("templates.enabled") {
-			// cmd.Println("templates.enabled not set to true")
 			e := cmd.ErrOrStderr()
 			_, err := e.Write([]byte("templates.enabled not set to true\n"))
 			if err != nil {
 				cmd.Println(err.Error())
 			}
 		}
+		// init rex
 		rex := rex.New()
 
 		err := rex.GenerateTemplates(force)

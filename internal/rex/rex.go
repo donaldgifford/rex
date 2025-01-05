@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+// Package rex is the top level data structure that allows the cli commands to
+// perform actions.
 package rex
 
 import (
@@ -28,6 +30,8 @@ import (
 	"github.com/donaldgifford/rex/internal/templates"
 )
 
+// Rex holds the interfaces and data for performing actions needed
+// by the cli calls.
 type Rex struct {
 	ADR      adr.IADR
 	Index    adr.IIndex
@@ -35,6 +39,10 @@ type Rex struct {
 	Config   config.RexConfigure
 }
 
+// New creates a new Rex to use.
+//
+// Each part of the struct calls below its interfaces to
+// use.
 func New() *Rex {
 	return &Rex{
 		ADR:      adr.NewIADR(),
@@ -44,10 +52,13 @@ func New() *Rex {
 	}
 }
 
+// Settings is a helper to return current settings
 func (r *Rex) Settings() *config.RexConfig {
 	return r.Config.Settings()
 }
 
+// NewADR creates a new ADR from content on disk and updates
+// the current index configured.
 func (r *Rex) NewADR(content *adr.Content) error {
 	// create adr
 	adr, err := r.ADR.Create(content)

@@ -42,6 +42,7 @@ Regenerate index listed from .rex.yaml config file:
 The index subcommand looks at the .rex.yaml config file to 
 see where to save the index file, name, and what template to use.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// init rex
 		rex := rex.New()
 
 		err := rex.GenerateIndex(force)

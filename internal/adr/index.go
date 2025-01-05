@@ -20,8 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// Eventually index will work like terraform-docs where you put an anchor in the readme or whatever markdown file and then
-// it will parse the template into that file between those anchors.
 package adr
 
 import (
@@ -33,28 +31,34 @@ import (
 	"github.com/spf13/viper"
 )
 
+// IIndex creates and processes indices
 type IIndex interface {
 	Execute() *Index
 	ADRs() error
 	Process(fileName string) *IndexAdr
 }
 
+// Index contains data on an index including its content
 type Index struct {
 	DocPath       string
 	IndexFileName string
 	Content       IndexContent
 }
 
+// IndexContent contains data on the adr's in its index
 type IndexContent struct {
 	Title string
 	Adrs  []*IndexAdr
 }
 
+// IndexAdr is the data used for indexing adrs by title and id
 type IndexAdr struct {
 	Id    int
 	Title string
 }
 
+// NewIIndex creates a new Index to be used
+// TODO: allow passing IndexContent title or a way to change it later
 func NewIIndex() *Index {
 	return &Index{
 		DocPath:       viper.GetString("adr.path"),
@@ -65,19 +69,26 @@ func NewIIndex() *Index {
 	}
 }
 
+// Execute returns the current index
+//
+// This may change in the future depending on if its still necessary
 func (idx *Index) Execute() *Index {
 	return idx
 }
 
+// ADRs reads the current adrs in the config path and updates the Index
+// with them.
 func (idx *Index) ADRs() error {
 	var myAdrs []*IndexAdr
 
+	// read adrs in the configs DocPath
 	entries, err := os.ReadDir(idx.DocPath)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 
+	// iterate over the adrs and add them to the index
 	for _, e := range entries {
 		if e.Name() != idx.IndexFileName {
 			adr := idx.Process(e.Name())
@@ -89,6 +100,10 @@ func (idx *Index) ADRs() error {
 	return nil
 }
 
+// Process takes a file name and returns the IndexAdr
+//
+// Name examples:
+//   - "1-my-adr.md" = IndexAdr{Id: 1, Title: "my adr"}
 func (idx *Index) Process(file string) *IndexAdr {
 	idTitle := strings.SplitN(file, "-", 2)
 	id, _ := strconv.Atoi(idTitle[0])

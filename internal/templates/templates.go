@@ -19,10 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
-// templates.go
-//
-//  templates package is responsible for embedding the default template files used to created the rex config yaml file and other optionial templates. The embedded files can be found in the 'default' directory inside this package.
+// Package templates is responsible for embedding the default template files used to created the rex config yaml file and other optionial templates. The embedded files can be found in the 'default' directory inside this package.
 //
 //  templates provides an interface to allow creating new custom ADR's, docs, or other files to be generated and used with rex.
 //
@@ -41,14 +38,17 @@ import (
 	"github.com/donaldgifford/rex/internal/adr"
 )
 
+// Template provides all functions for interacting with templates in rex
 type Template interface {
-	Read(file string) ([]byte, error) // read in template file from embedded directory
-	Execute()                         // Execute the template with passed in configuration variables
+	Read(file string) ([]byte, error)
+	Execute() // Not implemented
 	GetSettings() *Settings
 	CreateADR(adr *adr.ADR) error
 	GenerateIndex(idx *adr.Index, force bool) error
 }
 
+// NewTemplate returns a template struct to use based on if in the Settings
+// to use default embedded or provided in the config
 func NewTemplate() Template {
 	if viper.GetBool("templates.enabled") {
 		return &RexTemplate{
@@ -69,6 +69,7 @@ func NewTemplate() Template {
 	}
 }
 
+// Settings holds template data on where to get the different templates used.
 type Settings struct {
 	TemplatePath  string
 	AdrTemplate   string

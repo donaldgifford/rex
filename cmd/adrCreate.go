@@ -44,6 +44,7 @@ var adrCreateCmd = &cobra.Command{
 rex create -t "My ADR Title" -a "Donald Gifford"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		// create adr content
 		content := adr.Content{
 			Title:  title,
 			Author: author,

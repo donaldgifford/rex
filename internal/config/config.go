@@ -19,6 +19,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+// Package config provides an interface that pulls data from the .rex.config.yaml
+//
+// The interface also provides methods that create the default directories and
+// templates based on that config option.
 package config
 
 import (
@@ -26,16 +30,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// RexConfigure provides methods to configure and setup rex
 type RexConfigure interface {
 	Settings() *RexConfig
 	YamlOut() ([]byte, error)
 }
 
+// NewRexConfigure creates new RexConfigure to use
 func NewRexConfigure() RexConfigure {
 	return NewRexConfig()
 }
 
-// RexConfig holds configuration from .rex.yaml
+// RexConfig holds configuration data from .rex.yaml
 type RexConfig struct {
 	ADR               ADRConfig      `yaml:"adr"`
 	Templates         TemplateConfig `yaml:"templates"`
@@ -122,6 +128,8 @@ func (rc *RexConfig) Settings() *RexConfig {
 	return rc
 }
 
+// YamlOut is a helper which outputs the current RexConfig
+// settings to yaml
 func (rc *RexConfig) YamlOut() ([]byte, error) {
 	yamlData, err := yaml.Marshal(&rc)
 	if err != nil {
