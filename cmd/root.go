@@ -32,15 +32,28 @@ import (
 
 var (
 	cfgFile string
-	version = "0.0.1"
 	force   = false
+
+	// build variables
+	buildVersion = "0.0.1"
+	buildDate    = "today"
+	buildCommit  = "1234"
+	buildArch    = "mac"
+	buildOs      = "arm"
+
+	buildTemplateOutput = `%s
+BuildDate: %s
+BuildCommit: %s
+BuildArch: %s
+BuildOs: %s`
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     "rex",
-	Version: version,
-	Short:   "Cli tool for managing ADR's",
+	Version: fmt.Sprintf(buildTemplateOutput, buildVersion, buildDate, buildCommit, buildArch, buildOs),
+	// Version: buildVersion,
+	Short: "Cli tool for managing ADR's",
 	Long: `Rex is a CLI tool for managing ADR's inside a codebase. It attempts to 
 solve some issues with other ADR tooling. For example:
 
