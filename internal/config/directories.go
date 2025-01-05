@@ -39,7 +39,6 @@ func (r *RexConfig) GenerateDirectories() error {
 			return err
 		}
 
-		return nil
 	}
 
 	// mkdirall with path string
