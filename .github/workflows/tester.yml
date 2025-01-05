@@ -13,13 +13,10 @@ jobs:
         run: echo $DISCORD_WEBHOOK_ID
 
       - name: set discord webhook id out2
-        run: echo ${DISCORD_WEBHOOK_ID}
+        run: echo ${{ DISCORD_WEBHOOK_ID }}
 
       - name: set discord webhook id out3
-        run: echo ${env.DISCORD_WEBHOOK_ID}
-
-      - name: set discord webhook id
-        run: echo DISCORD_WEBHOOK_ID=$(echo ${env.DISCORD_WEBHOOK_ID} >> ${GITHUB_ENV}
+        run: echo ${{ env.DISCORD_WEBHOOK_ID }}
 
       - name: Environment Printer
         uses: managedkaos/print-env@v1.0
