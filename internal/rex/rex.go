@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+// Package rex is the top level data structure that allows the cli commands to
+// perform actions.
 package rex
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/donaldgifford/rex/internal/adr"
 	"github.com/donaldgifford/rex/internal/config"
 	"github.com/donaldgifford/rex/internal/templates"
 )
 
+// Rex holds the interfaces and data for performing actions needed
+// by the cli calls.
 type Rex struct {
 	ADR      adr.IADR
 	Index    adr.IIndex
@@ -38,6 +39,10 @@ type Rex struct {
 	Config   config.RexConfigure
 }
 
+// New creates a new Rex to use.
+//
+// Each part of the struct calls below its interfaces to
+// use.
 func New() *Rex {
 	return &Rex{
 		ADR:      adr.NewIADR(),
@@ -47,10 +52,13 @@ func New() *Rex {
 	}
 }
 
+// Settings is a helper to return current settings
 func (r *Rex) Settings() *config.RexConfig {
 	return r.Config.Settings()
 }
 
+// NewADR creates a new ADR from content on disk and updates
+// the current index configured.
 func (r *Rex) NewADR(content *adr.Content) error {
 	// create adr
 	adr, err := r.ADR.Create(content)
@@ -67,41 +75,51 @@ func (r *Rex) NewADR(content *adr.Content) error {
 	return nil
 }
 
-func (r *Rex) UpdateIndex() error {
+func (r *Rex) UpdateIndex(force bool) error {
 	err := r.Index.ADRs()
 	if err != nil {
 		return err
 	}
 
 	idx := r.Index.Execute()
-	err = r.Template.GenerateIndex(idx)
+	err = r.Template.GenerateIndex(idx, force)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// GenerateDirectories creates the default directories used for rex
+// force is used to overwrite the templates if found
+//
+// if "templates.enabled: true" is the .rex.yaml config file
+// then this function creates the default templates directory
 func (r *Rex) GenerateDirectories() error {
-	// get current working directory
-	cwd, err := os.Getwd()
+	err := r.Config.Settings().GenerateDirectories()
 	if err != nil {
 		return err
 	}
-
-	// create directory path string
-	dirPath := fmt.Sprintf("%s/%s", cwd, r.ADR.GetSettings().Path)
-
-	// mkdirall with path string
-	err = os.MkdirAll(dirPath, 0750)
-	if err != nil && !os.IsExist(err) {
-		return err
-	}
-
 	return nil
 }
 
-func (r *Rex) GenerateIndex() error {
-	err := r.Template.GenerateIndex(r.Index.Execute())
+// GenerateDefaultTemplates creates the default templates used for rex
+//
+// if force is set, it will overwrite the current template files if
+// found with the defaults
+func (r *Rex) GenerateTemplates(force bool) error {
+	err := r.Config.Settings().GenerateDefaultTemplates(force)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GenerateIndex updates the current index
+//
+// if force is set, it will overwrite the current index file if
+// found.
+func (r *Rex) GenerateIndex(force bool) error {
+	err := r.Template.GenerateIndex(r.Index.Execute(), force)
 	if err != nil {
 		return err
 	}

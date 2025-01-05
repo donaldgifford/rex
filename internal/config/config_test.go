@@ -1,3 +1,24 @@
+/*
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 package config
 
 import (
@@ -7,6 +28,7 @@ import (
 	"testing"
 
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -49,7 +71,7 @@ func initDefaultConfig() {
 	defaultAdrPath = "tests/docs/adr/"
 	defaultAdrIndexPage = "README.md"
 	defaultAdrAddToIndex = true
-	defaultTemplatesPath = "templates/"
+	defaultTemplatesPath = "tests/docs/templates/"
 	defaultTemplatesEnabled = false
 	defaultTemplatesAdrDefault = "adr.tmpl"
 	defaultTemplatesAdrIndex = "index.tmpl"
@@ -98,8 +120,39 @@ func removeTestConfigFile(name string) error {
 
 func TestMain(m *testing.M) {
 	adrDocsPath := "tests/docs/adr/"
+	templatesPath := "tests/docs/templates/"
 
 	err := createTestFolder(adrDocsPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath + "poop/adr/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestADRFile(fmt.Sprintf("%s%s", templatesPath+"poop/adr/", "adr.tmpl"))
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath + "poop/index/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestADRFile(fmt.Sprintf("%s%s", templatesPath+"poop/index/", "index.tmpl"))
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -145,40 +198,37 @@ func TestMain(m *testing.M) {
 }
 
 /*
-* Mocks
- */
-
-type MockRexConfig struct{}
-
-func (m *MockRexConfig) ConfigExists() bool {
-	return true
-}
-
-func (m *MockRexConfig) ReadConfig() error {
-	return nil
-}
-
-func (m *MockRexConfig) GenerateConfig(force bool) error {
-	return nil
-}
-
-func (m *MockRexConfig) GenerateIndex() error {
-	return nil
-}
-
-func (m *MockRexConfig) GenerateDirectories(force bool, index bool) error {
-	return nil
-}
-
-func (m *MockRexConfig) Settings() *RexConfig {
-	return nil
-}
-
-type MockRexConfigInstall struct{}
-
-/*
 * Acutal Tests
  */
+
+func TestRexConfig_NewRexConfigure(t *testing.T) {
+	tests := map[string]struct {
+		cwd      string
+		expected string
+		err      bool
+	}{
+		"output": {
+			cwd:      "",
+			expected: "adr:\n    path: tests/docs/adr/\n    index_page: README.md\n    add_to_index: true\ntemplates:\n    enabled: false\n    path: tests/docs/templates/\n    adr:\n        default: adr.tmpl\n        index: index.tmpl\nenable_github_pages: true\npages:\n    index: index.md\n    web:\n        config: _config.yml\n        layout:\n            adr: adr.html\n            default: default.html\nextras: true\nextra_pages:\n    install: install.md\n    usage: usage.md\n",
+			err:      false,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			r := NewRexConfigure()
+
+			b, err := r.YamlOut()
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
+				assert.Equal(t, test.expected, string(b))
+
+			}
+		})
+	}
+}
 
 func TestNewRexConfig(t *testing.T) {
 	c := &RexConfig{
@@ -274,5 +324,34 @@ func TestRexConfigSettings(t *testing.T) {
 
 	if config.Pages != c.Pages {
 		t.Errorf("Pages settings dont match: %v, %v", config.Pages, c.Pages)
+	}
+}
+
+func TestRexConfig_YamlOut(t *testing.T) {
+	tests := map[string]struct {
+		cwd      string
+		expected string
+		err      bool
+	}{
+		"output": {
+			cwd:      "",
+			expected: "adr:\n    path: tests/docs/adr/\n    index_page: README.md\n    add_to_index: true\ntemplates:\n    enabled: false\n    path: tests/docs/templates/\n    adr:\n        default: adr.tmpl\n        index: index.tmpl\nenable_github_pages: true\npages:\n    index: index.md\n    web:\n        config: _config.yml\n        layout:\n            adr: adr.html\n            default: default.html\nextras: true\nextra_pages:\n    install: install.md\n    usage: usage.md\n",
+			err:      false,
+		},
+	}
+
+	for name, test := range tests {
+		t.Run(name, func(t *testing.T) {
+			r := NewRexConfig()
+
+			b, err := r.YamlOut()
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
+				assert.Equal(t, test.expected, string(b))
+
+			}
+		})
 	}
 }

@@ -19,10 +19,37 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/donaldgifford/rex/cmd"
+import (
+	"github.com/donaldgifford/rex/internal/rex"
+	"github.com/spf13/cobra"
+)
 
-func main() {
-	cmd.Execute()
+// generateDirectoriesCmd represents the generateDirectories command
+var generateDirectoriesCmd = &cobra.Command{
+	Use:   "directories",
+	Short: "Create directories used by rex",
+	Long: `directories subcommand will create the directories needed 
+for rex based on your .rex.yaml config file. For example:
+
+Create directories listed from .rex.yaml config file:
+  rex config generate directories
+
+If "templates.enabled: true" in your .rex.yaml config file then the 
+directories subcommand will create the directories listed in your config 
+at "templates.path".`,
+	Run: func(cmd *cobra.Command, args []string) {
+		// init rex
+		rex := rex.New()
+
+		err := rex.GenerateDirectories()
+		if err != nil {
+			cmd.Println(err.Error())
+		}
+	},
+}
+
+func init() {
+	configGenerateCmd.AddCommand(generateDirectoriesCmd)
 }

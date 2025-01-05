@@ -22,37 +22,47 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/donaldgifford/rex/internal/rex"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// adrRevisionCmd represents the adrRevision command
-var adrRevisionCmd = &cobra.Command{
-	Use:   "adrRevision",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+// generateTemplatesCmd represents the generateTemplates command
+var generateTemplatesCmd = &cobra.Command{
+	Use:   "templates",
+	Short: "create templates for rex",
+	Long: `templates subcommand creates the default templates files for rex.
+This subcommand only works if "templates.enabled: true" in your .rex.yaml 
+config file.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Create templates listed from .rex.yaml config file:
+  rex config generate templates 
+
+Passing '--force, -f' will overwrite the templates if files 
+are found.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: create this
-		fmt.Println("adrRevision called")
+		// check to see if templates are enabled
+		// if they aren't we exit since we dont need
+		// template files unless this is enabled
+		if !viper.GetBool("templates.enabled") {
+			e := cmd.ErrOrStderr()
+			_, err := e.Write([]byte("templates.enabled not set to true\n"))
+			if err != nil {
+				cmd.Println(err.Error())
+			}
+		}
+		// init rex
+		rex := rex.New()
+
+		err := rex.GenerateTemplates(force)
+		if err != nil {
+			cmd.Println(err.Error())
+		}
 	},
 }
 
 func init() {
-	adrCmd.AddCommand(adrRevisionCmd)
+	configGenerateCmd.AddCommand(generateTemplatesCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// adrRevisionCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// adrRevisionCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	generateTemplatesCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
 }

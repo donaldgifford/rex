@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +19,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+// Package adr provides interfaces and methods for creating and managing adr's
+//
+// Currently this package does not implement the Revision method as it still has
+// to be built.
 package adr
 
 import (
@@ -31,6 +35,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// An IADR creates ADR's to use and update.
 type IADR interface {
 	Create(content *Content) (*ADR, error)
 	Revision(id int) (*ADR, error)
@@ -38,6 +43,7 @@ type IADR interface {
 	GetSettings() *ADRConfig
 }
 
+// NewIADR creates new ADR
 func NewIADR() IADR {
 	return NewADR()
 }

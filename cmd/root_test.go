@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,14 +38,14 @@ func ReadTestFile(file string) ([]byte, error) {
 
 // path: "tests/docs/adr/"
 
-func createConfigFile(file string) error {
-	rexConfig := `adr:
-  path: "tests/docs/adr/"
+func createConfigFile(file string, adrPath string, templatesEnabled bool, templatePath string) error {
+	rexConfig := fmt.Sprintf(`adr:
+  path: %s
   index_page: "README.md"
   add_to_index: true # on rex create, a new record will be added to the index page
 templates:
-  enabled: false
-  path: "templates/"
+  enabled: %v
+  path: %s
   adr:
     default: "adr.tmpl"
     index: "index.tmpl"
@@ -60,7 +60,7 @@ pages:
 extras: true
 extra_pages:
   install: install.md
-  usage: usage.md"`
+  usage: usage.md"`, adrPath, templatesEnabled, templatePath)
 	rc := []byte(rexConfig)
 	f, err := os.Create(file)
 	if err != nil {
@@ -72,6 +72,31 @@ extra_pages:
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func createTestIndexTemplate(name string) error {
+	idxTemplate := `# {{ .Content.Title }}
+
+## ADRs
+
+| ID | Title | Link |
+| -- | ----- | ---- |
+{{- range .Content.Adrs }}
+| {{ .Id }} | {{ .Title }} | link |
+{{- end }}`
+	idx := []byte(idxTemplate)
+	f, err := os.Create(name)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(idx)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -112,6 +137,48 @@ func TestMain(m *testing.M) {
 	adrDocsPath := "tests/docs/adr/"
 
 	err := createTestFolder(adrDocsPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createConfigFile("tests/.rex.yaml", "tests/docs/adr/", false, "tests/docs/templates/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createConfigFile("tests/.dirs-rex.yaml", "tests/dirs/docs/adr/", false, "tests/dirs/docs/templates/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createConfigFile("tests/.dirs-enabled-rex.yaml", "tests/dirs/docs/adr/", true, "tests/dirs/docs/templates/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder("tests/dirs/docs/templates/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestIndexTemplate("tests/dirs/docs/templates/index.tmpl")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createConfigFile("tests/.dirs-error-rex.yaml", "tests/docs/adr/1-test1.md", false, "tests/dirs/docs/templates/")
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createConfigFile("tests/.templates-rex.yaml", "tests/templates/docs/adr/", false, "tests/templates/docs/templates/")
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)

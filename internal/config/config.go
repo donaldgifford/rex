@@ -1,3 +1,28 @@
+/*
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+// Package config provides an interface that pulls data from the .rex.config.yaml
+//
+// The interface also provides methods that create the default directories and
+// templates based on that config option.
 package config
 
 import (
@@ -5,16 +30,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// RexConfigure provides methods to configure and setup rex
 type RexConfigure interface {
 	Settings() *RexConfig
 	YamlOut() ([]byte, error)
 }
 
+// NewRexConfigure creates new RexConfigure to use
 func NewRexConfigure() RexConfigure {
 	return NewRexConfig()
 }
 
-// RexConfig holds configuration from .rex.yaml
+// RexConfig holds configuration data from .rex.yaml
 type RexConfig struct {
 	ADR               ADRConfig      `yaml:"adr"`
 	Templates         TemplateConfig `yaml:"templates"`
@@ -101,6 +128,8 @@ func (rc *RexConfig) Settings() *RexConfig {
 	return rc
 }
 
+// YamlOut is a helper which outputs the current RexConfig
+// settings to yaml
 func (rc *RexConfig) YamlOut() ([]byte, error) {
 	yamlData, err := yaml.Marshal(&rc)
 	if err != nil {

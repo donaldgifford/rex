@@ -23,7 +23,6 @@ package templates
 
 import (
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -32,14 +31,62 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEmbeddedGetSettings(t *testing.T) {
+func TestRexTemplate_Read(t *testing.T) {
+	tests := []struct {
+		name string // description of this test case
+		// Named input parameters for target function.
+		file    string
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "adr_tmpl",
+			file: "tests/docs/templates/adr.tmpl",
+			want: "# {{ .Content.Title }}\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome",
+			// want:    []byte{},
+			wantErr: false,
+		},
+		{
+			name: "index_tmpl",
+			file: "tests/docs/templates/index.tmpl",
+			want: "# {{ .Content.Title }}\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n{{- range .Content.Adrs }}\n| {{ .Id }} | {{ .Title }} | link |\n{{- end }}",
+			// want:    []byte{},
+			wantErr: false,
+		},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// TODO: construct the receiver type.
+			var rt RexTemplate
+			got, gotErr := rt.Read(tt.file)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("Read() failed: %v", gotErr)
+				}
+				return
+			}
+			if tt.wantErr {
+				t.Fatal("Read() succeeded unexpectedly")
+			}
+			// TODO: update the condition below to compare got with tt.want.
+			if true {
+				assert.Equal(t, tt.want, string(got), "")
+				// t.Errorf("Read() = %v, want %v", got, string(tt.want))
+			}
+		})
+	}
+}
+
+func TestRexTemplate_GetSettings(t *testing.T) {
 	tests := map[string]struct {
 		settings Settings
 		err      bool
 	}{
-		"embedded": {
+		"template": {
 			settings: Settings{
-				TemplatePath:  "default/",
+				TemplatePath:  "tests/docs/templates/",
 				AdrTemplate:   "adr.tmpl",
 				IndexTemplate: "index.tmpl",
 			},
@@ -49,7 +96,8 @@ func TestEmbeddedGetSettings(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			viper.Set("templates.enabled", false)
+			viper.Set("templates.enabled", true)
+			viper.Set("templates.path", defaultTemplatesPath)
 			tmp := NewTemplate()
 			a := tmp.GetSettings()
 			assert.Equal(t, test.settings.AdrTemplate, a.AdrTemplate, "")
@@ -58,53 +106,9 @@ func TestEmbeddedGetSettings(t *testing.T) {
 		})
 	}
 }
+func TestRexTemplate_Execute(t *testing.T) {}
 
-func TestEmbeddedRead(t *testing.T) {
-	tests := map[string]struct {
-		file     string
-		contents string
-		err      bool
-	}{
-		"adr.tmpl": {
-			file:     "adr.tmpl",
-			contents: "# {{ .Content.Title }}\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
-			err:      false,
-		},
-		"index.tmpl": {
-			file:     "index.tmpl",
-			contents: "# {{ .Content.Title }}\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n{{- range .Content.Adrs }}\n| {{ .Id }} | {{ .Title }} | link |\n{{- end }}\n",
-			err:      false,
-		},
-		"index_readme.tmpl": {
-			file:     "index_readme.tmpl",
-			contents: "# ADR List\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n",
-			err:      false,
-		},
-	}
-
-	for name, test := range tests {
-		t.Run(name, func(t *testing.T) {
-			viper.Set("templates.enabled", false)
-			tmp := NewTemplate()
-			a, err := tmp.Read(fmt.Sprintf("%s%s", "default/", test.file))
-			assert.Equal(t, test.contents, string(a), "")
-			if test.err {
-				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
-			} else {
-				assert.Nil(t, err, "")
-			}
-		})
-	}
-}
-func TestEmbeddedExecute(t *testing.T) {}
-
-func parseContentWithDate(content string) string {
-	d := time.Now()
-	formattedDate := d.Format("2006-01-02")
-	return fmt.Sprintf(content, formattedDate)
-}
-
-func TestEmbeddedCreateADR(t *testing.T) {
+func TestRexTemplate_CreateADR(t *testing.T) {
 	d := time.Now().Format(time.DateOnly)
 	tests := map[string]struct {
 		file    string
@@ -114,7 +118,7 @@ func TestEmbeddedCreateADR(t *testing.T) {
 	}{
 		"adr": {
 			file:    "3-Test-3.md",
-			content: parseContentWithDate("# Test 3\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | Author | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n"),
+			content: parseContentWithDate("# Test 3\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | Author | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome"),
 			adr: &adr.ADR{
 				Content: adr.Content{
 					Title:  "Test 3",
@@ -135,7 +139,8 @@ func TestEmbeddedCreateADR(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			viper.Set("templates.enabled", false)
+			viper.Set("templates.enabled", true)
+			viper.Set("templates.path", defaultTemplatesPath)
 
 			tmp := NewTemplate()
 			err := tmp.CreateADR(test.adr)
@@ -158,15 +163,7 @@ func TestEmbeddedCreateADR(t *testing.T) {
 	}
 }
 
-func ReadTestFile(file string) ([]byte, error) {
-	t, err := os.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-	return t, nil
-}
-
-func TestEmbeddedGenereateIndex(t *testing.T) {
+func TestRexTemplate_GenerateIndex(t *testing.T) {
 	tests := map[string]struct {
 		file    string
 		content string
@@ -179,7 +176,7 @@ func TestEmbeddedGenereateIndex(t *testing.T) {
 			content: "# ADR Index\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n| 1 | test1 | link |\n| 2 | test2 | link |\n| 3 | Test-3 | link |\n",
 			idx: &adr.Index{
 				DocPath:       defaultAdrPath,
-				IndexFileName: defaultTemplatesAdrIndex,
+				IndexFileName: "rex_" + defaultAdrIndexPage,
 				Content: adr.IndexContent{
 					Title: "ADR Index",
 					Adrs: []*adr.IndexAdr{
@@ -196,7 +193,9 @@ func TestEmbeddedGenereateIndex(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			viper.Set("templates.enabled", false)
+			viper.Set("templates.enabled", true)
+			viper.Set("templates.path", defaultTemplatesPath)
+			viper.Set("adr.index_page", "rex_"+defaultAdrIndexPage)
 
 			tmp := NewTemplate()
 			err := tmp.GenerateIndex(test.idx, test.force)

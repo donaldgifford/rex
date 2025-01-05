@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ var adrCreateCmd = &cobra.Command{
 rex create -t "My ADR Title" -a "Donald Gifford"
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		// create adr content
 		content := adr.Content{
 			Title:  title,
 			Author: author,
@@ -58,7 +59,8 @@ rex create -t "My ADR Title" -a "Donald Gifford"
 			cmd.Println(err.Error())
 		}
 
-		err = rex.UpdateIndex()
+		// UpdateIndex always tries to update and regenerate the index
+		err = rex.UpdateIndex(true)
 		if err != nil {
 			cmd.Println(err.Error())
 		}

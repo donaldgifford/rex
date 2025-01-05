@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/spf13/viper"
@@ -72,7 +73,7 @@ func initDefaultConfig() {
 	defaultAdrPath = "tests/docs/adr/"
 	defaultAdrIndexPage = "README.md"
 	defaultAdrAddToIndex = true
-	defaultTemplatesPath = "templates/"
+	defaultTemplatesPath = "tests/docs/templates/"
 	defaultTemplatesEnabled = false
 	defaultTemplatesAdrDefault = "adr.tmpl"
 	defaultTemplatesAdrIndex = "index.tmpl"
@@ -92,6 +93,58 @@ func createTestADRFile(name string) error {
 		return err
 	}
 	f.Close()
+	return nil
+}
+
+func createTestTemplates(path string) error {
+	cleanFile := filepath.Clean(path + "adr.tmpl")
+	a, err := os.Create(cleanFile)
+	if err != nil {
+		return err
+	}
+	_, err = a.WriteString(`# {{ .Content.Title }}
+
+| Status | Author         |  Created | Last Update | Current Version |
+| ------ | -------------- | -------- | ----------- | --------------- |
+| {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |
+
+## Context and Problem Statement
+
+## Decision Drivers
+
+## Considered Options
+
+## Decision Outcome`)
+	if err != nil {
+		return err
+	}
+	err = a.Close()
+	if err != nil {
+		return err
+	}
+
+	cleanFile = filepath.Clean(path + "index.tmpl")
+	i, err := os.Create(cleanFile)
+	if err != nil {
+		return err
+	}
+	_, err = i.WriteString(`# {{ .Content.Title }}
+
+## ADRs
+
+| ID | Title | Link |
+| -- | ----- | ---- |
+{{- range .Content.Adrs }}
+| {{ .Id }} | {{ .Title }} | link |
+{{- end }}`)
+	if err != nil {
+		return err
+	}
+	err = i.Close()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -121,8 +174,21 @@ func removeTestConfigFile(name string) error {
 
 func TestMain(m *testing.M) {
 	adrDocsPath := "tests/docs/adr/"
+	templatesPath := "tests/docs/templates/"
 
 	err := createTestFolder(adrDocsPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestFolder(templatesPath)
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
+
+	err = createTestTemplates(templatesPath)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)

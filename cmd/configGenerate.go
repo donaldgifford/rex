@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,52 +23,20 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-
-	"github.com/donaldgifford/rex/internal/rex"
-)
-
-var (
-	directories bool
-	index       bool
 )
 
 // configGenerateCmd represents the configGenerate command
 var configGenerateCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "Generate and install config files, directories, etc",
-	Long: `Generate allos you to install directories and files used 
-for rex. For example:
+	Short: "Generate and install config files, directories, and templates",
+	Long: `Generate provides commands for you to install directories, files, and
+templates used for rex. 
 
-Create directories listed from .rex.yaml config file:
-  rex config generate --directories
-
-Create index listed from .rex.yaml config file:
-  rex config generate --index`,
-	Run: func(cmd *cobra.Command, args []string) {
-		rex := rex.New()
-
-		// if --directories and --index set
-		if directories {
-			err := rex.GenerateDirectories()
-			if err != nil {
-				cmd.Println(err.Error())
-			}
-		}
-
-		// if just --index
-		if index {
-			err := rex.GenerateIndex()
-			if err != nil {
-				cmd.Println(err.Error())
-			}
-		}
-	},
+If you have "templates.enabled: true" in your .rex.yaml config 
+file then the subcommands will use those settings. If not, the defaults
+are used.`,
 }
 
 func init() {
 	configCmd.AddCommand(configGenerateCmd)
-
-	configGenerateCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
-	configGenerateCmd.Flags().BoolVarP(&index, "index", "x", false, "create index for docs")
-	configGenerateCmd.Flags().BoolVarP(&directories, "directories", "d", false, "create directories for docs")
 }

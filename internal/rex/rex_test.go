@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -290,22 +290,25 @@ func TestRexConfigGenereateIndex(t *testing.T) {
 		configIndex string
 		configAdd   bool
 		expected    []string
+		force       bool
 		err         bool
 	}{
-		"good": {
+		"good_force": {
 			configPath:  defaultAdrPath,
 			configIndex: "README.md",
 			configAdd:   true,
 			expected:    []string{"1-test1.md", "2-test2.md"},
+			force:       true,
 			err:         false,
 		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
+		"error_force_false": {
+			configPath:  defaultAdrPath,
+			configIndex: "README.md",
+			configAdd:   true,
+			expected:    []string{"1-test1.md", "2-test2.md"},
+			force:       false,
+			err:         true,
+		},
 	}
 
 	for name, test := range tests {
@@ -314,7 +317,7 @@ func TestRexConfigGenereateIndex(t *testing.T) {
 		viper.Set("adr.add_to_index", test.configAdd)
 
 		r := New()
-		err := r.GenerateIndex()
+		err := r.GenerateIndex(test.force)
 		t.Run(name, func(t *testing.T) {
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
@@ -331,18 +334,21 @@ func TestRexUpdateIndex(t *testing.T) {
 		configPath  string
 		configIndex string
 		configAdd   bool
+		force       bool
 		err         bool
 	}{
 		"good": {
 			configPath:  defaultAdrPath,
 			configIndex: "README.md",
 			configAdd:   true,
+			force:       true,
 			err:         false,
 		},
 		"error": {
 			configPath:  "/path/to/adr",
 			configIndex: "README.md",
 			configAdd:   true,
+			force:       true,
 			err:         true,
 		},
 	}
@@ -353,7 +359,7 @@ func TestRexUpdateIndex(t *testing.T) {
 		viper.Set("adr.add_to_index", test.configAdd)
 
 		r := New()
-		err := r.UpdateIndex()
+		err := r.UpdateIndex(test.force)
 
 		t.Run(name, func(t *testing.T) {
 			if test.err {
@@ -374,20 +380,12 @@ func TestRexConfigGenereateDirectories(t *testing.T) {
 		err         bool
 	}{
 		"good": {
-			configPath: "tests/gen/docs/adr",
-			// configPath:  defaultAdrPath,
+			configPath:  "tests/gen/docs/adr",
 			configIndex: "README.md",
 			configAdd:   true,
 			expected:    []string{"1-test1.md", "2-test2.md"},
 			err:         false,
 		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
 	}
 
 	for name, test := range tests {

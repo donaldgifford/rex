@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,12 +19,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package templates
+package config
 
-import "testing"
+import (
+	"os"
+)
 
-func TestRexGetSettings(t *testing.T)    {}
-func TestRexRead(t *testing.T)           {}
-func TestRexExecute(t *testing.T)        {}
-func TestRexCreateADR(t *testing.T)      {}
-func TestRexGenereateIndex(t *testing.T) {}
+// GenerateDirectories creates the default directories used for rex
+// force is used to overwrite the templates if found
+//
+// if "templates.enabled: true" is the .rex.yaml config file
+// then this function creates the default templates directory
+func (r *RexConfig) GenerateDirectories() error {
+	// create default templates if "templates.enabled"
+	if r.Templates.Enabled {
+		// create the templates directory from settings
+		err := os.MkdirAll(r.Templates.Path, 0750)
+		if err != nil && !os.IsExist(err) {
+			return err
+		}
+
+		return nil
+	}
+
+	// mkdirall with path string
+	err := os.MkdirAll(r.ADR.Path, 0750)
+	if err != nil && !os.IsExist(err) {
+		return err
+	}
+
+	return nil
+}

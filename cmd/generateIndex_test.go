@@ -24,38 +24,50 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func parseContentWithDate(content string) string {
-	d := time.Now()
-	formattedDate := d.Format("2006-01-02")
-	return fmt.Sprintf(content, formattedDate)
+// fileExists returns checks if a file already exists on disk
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
 
-func TestAdrCreateCMD(t *testing.T) {
+func TestGenerateIndex_Cmd(t *testing.T) {
 	tests := map[string]struct {
-		file    string
-		content string
-		setArgs []string
-		err     bool
+		configPath       string
+		templatesEnabled bool
+		templatesPath    string
+		content          string
+		indexFile        string
+		setArgs          []string
+		err              bool
 	}{
-		"adr": {
-			file:    "tests/docs/adr/3-Test-ADR-Create.md",
-			content: parseContentWithDate("# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n"),
-			setArgs: []string{"--config=tests/.rex.yaml", "adr", "create", "--title=Test ADR Create", "--author=TESTER"},
-			err:     false,
+		"default_embedded": {
+			configPath:       "tests/docs/adr/",
+			templatesEnabled: false,
+			templatesPath:    "",
+			content:          "",
+			indexFile:        "README.md",
+			setArgs:          []string{"--config=tests/.rex.yaml", "config", "generate", "index"},
+			err:              false,
+		},
+		"templates_enabled": {
+			configPath:       "tests/dirs/docs/adr/",
+			templatesEnabled: true,
+			templatesPath:    "tests/dirs/docs/templates/",
+			content:          "",
+			indexFile:        "README.md",
+			setArgs:          []string{"--config=tests/.dirs-enabled-rex.yaml", "config", "generate", "index"},
+			err:              false,
 		},
 	}
-
-	// err := createConfigFile("tests/.rex.yaml")
-	// if err != nil {
-	// 	log.Print(err)
-	// 	os.Exit(1)
-	// }
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -64,21 +76,18 @@ func TestAdrCreateCMD(t *testing.T) {
 			rootCmd.SetArgs(test.setArgs)
 
 			err := rootCmd.Execute()
-			if err != nil {
-				fmt.Println(err)
-			}
+			if test.err {
+				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
+			} else {
+				assert.Nil(t, err, "")
 
-			b, err := ReadTestFile(test.file)
-			if err != nil {
-				t.Errorf("error opening test file: %v, err: %v", test.file, err.Error())
+				fmt.Println(test.configPath + test.indexFile)
+				assert.Equal(t, true, fileExists(test.configPath+test.indexFile))
+				//
+				// if test.templatesEnabled {
+				// 	assert.Equal(t, true, directoryExists(test.templatesPath))
+				// }
 			}
-			assert.Equal(t, test.content, string(b), "")
 		})
 	}
-
-	// err = removeTestConfigFile("tests/.rex.yaml")
-	// if err != nil {
-	// 	log.Print(err)
-	// 	os.Exit(1)
-	// }
 }
