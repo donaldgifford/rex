@@ -35,9 +35,8 @@ func TestRexTemplate_Read(t *testing.T) {
 	tests := []struct {
 		name string // description of this test case
 		// Named input parameters for target function.
-		file string
-		want string
-		// want    []byte
+		file    string
+		want    string
 		wantErr bool
 	}{
 		{

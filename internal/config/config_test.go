@@ -196,22 +196,14 @@ func TestRexConfig_NewRexConfigure(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			r := NewRexConfigure()
-			if test.cwd == "" {
-				r.Settings().setCWD()
-			} else {
-				r.Settings().cwd = test.cwd
-			}
+
 			b, err := r.YamlOut()
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
 			} else {
 				assert.Nil(t, err, "")
 				assert.Equal(t, test.expected, string(b))
-				// assert.Equal(t, true, directoryExists(r.cwd+"/"+test.configPath))
-				//
-				// if test.templatesEnabled {
-				// 	assert.Equal(t, true, directoryExists(r.cwd+"/"+test.templatesPath))
-				// }
+
 			}
 		})
 	}
@@ -330,22 +322,14 @@ func TestRexConfig_YamlOut(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			r := NewRexConfig()
-			if test.cwd == "" {
-				r.setCWD()
-			} else {
-				r.cwd = test.cwd
-			}
+
 			b, err := r.YamlOut()
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
 			} else {
 				assert.Nil(t, err, "")
 				assert.Equal(t, test.expected, string(b))
-				// assert.Equal(t, true, directoryExists(r.cwd+"/"+test.configPath))
-				//
-				// if test.templatesEnabled {
-				// 	assert.Equal(t, true, directoryExists(r.cwd+"/"+test.templatesPath))
-				// }
+
 			}
 		})
 	}

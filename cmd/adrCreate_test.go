@@ -24,8 +24,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"log"
-	"os"
 	"testing"
 	"time"
 
@@ -53,11 +51,11 @@ func TestAdrCreateCMD(t *testing.T) {
 		},
 	}
 
-	err := createConfigFile("tests/.rex.yaml")
-	if err != nil {
-		log.Print(err)
-		os.Exit(1)
-	}
+	// err := createConfigFile("tests/.rex.yaml")
+	// if err != nil {
+	// 	log.Print(err)
+	// 	os.Exit(1)
+	// }
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -78,9 +76,9 @@ func TestAdrCreateCMD(t *testing.T) {
 		})
 	}
 
-	err = removeTestConfigFile("tests/.rex.yaml")
-	if err != nil {
-		log.Print(err)
-		os.Exit(1)
-	}
+	// err = removeTestConfigFile("tests/.rex.yaml")
+	// if err != nil {
+	// 	log.Print(err)
+	// 	os.Exit(1)
+	// }
 }

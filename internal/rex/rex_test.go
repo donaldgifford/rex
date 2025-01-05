@@ -309,13 +309,6 @@ func TestRexConfigGenereateIndex(t *testing.T) {
 			force:       false,
 			err:         true,
 		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
 	}
 
 	for name, test := range tests {
@@ -387,20 +380,12 @@ func TestRexConfigGenereateDirectories(t *testing.T) {
 		err         bool
 	}{
 		"good": {
-			configPath: "tests/gen/docs/adr",
-			// configPath:  defaultAdrPath,
+			configPath:  "tests/gen/docs/adr",
 			configIndex: "README.md",
 			configAdd:   true,
 			expected:    []string{"1-test1.md", "2-test2.md"},
 			err:         false,
 		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
 	}
 
 	for name, test := range tests {

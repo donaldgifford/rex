@@ -68,13 +68,6 @@ func TestRexConfig_GenereateDirectories(t *testing.T) {
 			expected:         []string{"1-test1.md", "2-test2.md"},
 			err:              true,
 		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
 	}
 
 	for name, test := range tests {
@@ -85,20 +78,16 @@ func TestRexConfig_GenereateDirectories(t *testing.T) {
 		viper.Set("templates.path", test.templatesPath)
 		t.Run(name, func(t *testing.T) {
 			r := NewRexConfig()
-			if test.cwd == "" {
-				r.setCWD()
-			} else {
-				r.cwd = test.cwd
-			}
+
 			err := r.GenerateDirectories()
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
 			} else {
 				assert.Nil(t, err, "")
-				assert.Equal(t, true, directoryExists(r.cwd+"/"+test.configPath))
+				assert.Equal(t, true, directoryExists(test.configPath))
 
 				if test.templatesEnabled {
-					assert.Equal(t, true, directoryExists(r.cwd+"/"+test.templatesPath))
+					assert.Equal(t, true, directoryExists(test.templatesPath))
 				}
 			}
 		})

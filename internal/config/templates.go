@@ -17,8 +17,8 @@ func fileExists(filename string) bool {
 }
 
 // writeTemplateFile writes a template to disk
-func (r *RexConfig) writeTemplateFile(file []byte, templateType string, cwd string) error {
-	templateFile, err := os.Create(fmt.Sprintf("%s/%s%s", cwd, r.Templates.Path, templateType))
+func (r *RexConfig) writeTemplateFile(file []byte, templateType string) error {
+	templateFile, err := os.Create(fmt.Sprintf("%s%s", r.Templates.Path, templateType))
 	if err != nil {
 		return err
 	}
@@ -35,26 +35,11 @@ func (r *RexConfig) writeTemplateFile(file []byte, templateType string, cwd stri
 	return nil
 }
 
-func (r *RexConfig) setCWD() error {
-	c, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	r.cwd = c
-	return nil
-}
-
 // GenerateDefaultTemplates creates the default templates used for rex
 //
 // if force is set, it will overwrite the current template files if
 // found with the defaults
 func (r *RexConfig) GenerateDefaultTemplates(force bool) error {
-	// // get cwd
-	// cwd, err := os.Getwd()
-	// if err != nil {
-	// 	return err
-	// }
-
 	// create a templates setting to use
 	eb := templates.EmbeddedTemplate{
 		Settings: templates.Settings{
@@ -66,7 +51,7 @@ func (r *RexConfig) GenerateDefaultTemplates(force bool) error {
 
 	// if force is true, overwrite current templates with the defaults
 	if force {
-		err := r.createDefaultTemplates(eb, r.cwd)
+		err := r.createDefaultTemplates(eb)
 		if err != nil {
 			return err
 		}
@@ -75,15 +60,15 @@ func (r *RexConfig) GenerateDefaultTemplates(force bool) error {
 	}
 
 	// check templates exist, if they do dont overwrite
-	if fileExists(r.cwd + "/" + r.Settings().Templates.Path + eb.Settings.AdrTemplate) {
+	if fileExists(r.Settings().Templates.Path + eb.Settings.AdrTemplate) {
 		return fmt.Errorf("ADR template file exists at: %s, please set --force to overwrite", r.Settings().Templates.Path+eb.Settings.AdrTemplate)
 	}
 
-	if fileExists(r.cwd + "/" + r.Settings().Templates.Path + eb.Settings.IndexTemplate) {
+	if fileExists(r.Settings().Templates.Path + eb.Settings.IndexTemplate) {
 		return fmt.Errorf("index template file exists at: %s, please set --force to overwrite", r.Settings().Templates.Path+eb.Settings.IndexTemplate)
 	}
 
-	err := r.createDefaultTemplates(eb, r.cwd)
+	err := r.createDefaultTemplates(eb)
 	if err != nil {
 		return err
 	}
@@ -92,7 +77,7 @@ func (r *RexConfig) GenerateDefaultTemplates(force bool) error {
 }
 
 // createDefaultTemplates uses the template settings to create the default templates on disk
-func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTemplate, cwd string) error {
+func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTemplate) error {
 	// read default adr template from embedded template
 	a, err := templateSettings.Read(templateSettings.Settings.TemplatePath + templateSettings.Settings.AdrTemplate)
 	if err != nil {
@@ -100,7 +85,7 @@ func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTe
 	}
 
 	// write adr template to file
-	err = r.writeTemplateFile(a, templateSettings.Settings.AdrTemplate, cwd)
+	err = r.writeTemplateFile(a, templateSettings.Settings.AdrTemplate)
 	if err != nil {
 		return err
 	}
@@ -112,7 +97,7 @@ func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTe
 	}
 
 	// write index template to file
-	err = r.writeTemplateFile(t, templateSettings.Settings.IndexTemplate, cwd)
+	err = r.writeTemplateFile(t, templateSettings.Settings.IndexTemplate)
 	if err != nil {
 		return err
 	}

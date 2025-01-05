@@ -31,26 +31,7 @@ func TestRexConfig_GenerateDefaultTemplates(t *testing.T) {
 			force:         true,
 			err:           false,
 		},
-		"error_force_bad_cwd": {
-			configPath:    defaultAdrPath,
-			templatesPath: defaultTemplatesPath,
-			configIndex:   "README.md",
-			configAdd:     true,
-			cwd:           "poopfart2/",
-			expected:      []string{"1-test1.md", "2-test2.md"},
-			force:         true,
-			err:           true,
-		},
-		"error_no_force_bad_cwd": {
-			configPath:    defaultAdrPath,
-			templatesPath: defaultTemplatesPath,
-			configIndex:   "README.md",
-			configAdd:     true,
-			cwd:           "poopfart/",
-			expected:      []string{"1-test1.md", "2-test2.md"},
-			force:         false,
-			err:           true,
-		},
+
 		"error_adr_found_no_force": {
 			configPath:    defaultAdrPath,
 			templatesPath: defaultTemplatesPath + "poop/adr/",
@@ -71,13 +52,6 @@ func TestRexConfig_GenerateDefaultTemplates(t *testing.T) {
 			force:         false,
 			err:           true,
 		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
 	}
 
 	for name, test := range tests {
@@ -87,11 +61,7 @@ func TestRexConfig_GenerateDefaultTemplates(t *testing.T) {
 		viper.Set("templates.path", test.templatesPath)
 
 		r := NewRexConfig()
-		if test.cwd == "" {
-			r.setCWD()
-		} else {
-			r.cwd = test.cwd
-		}
+
 		err := r.GenerateDefaultTemplates(test.force)
 		t.Run(name, func(t *testing.T) {
 			if test.err {
@@ -104,12 +74,6 @@ func TestRexConfig_GenerateDefaultTemplates(t *testing.T) {
 }
 
 func TestRexConfig_createDefaultTemplates(t *testing.T) {
-	// get cwd
-	// cwd, err := os.Getwd()
-	// if err != nil {
-	// 	t.Errorf("failed on Getwd, err: %v\n", err.Error())
-	// }
-
 	tests := map[string]struct {
 		configPath       string
 		configIndex      string
@@ -174,27 +138,6 @@ func TestRexConfig_createDefaultTemplates(t *testing.T) {
 			cwd: "",
 			err: true,
 		},
-		"error_bad_cwd": {
-			configPath:  defaultAdrPath,
-			configIndex: "README.md",
-			configAdd:   true,
-			templateSettings: templates.EmbeddedTemplate{
-				Settings: templates.Settings{
-					TemplatePath:  "default/",
-					AdrTemplate:   "adr.tmpl",
-					IndexTemplate: "index.tmpl",
-				},
-			},
-			cwd: "pathpoop/",
-			err: true,
-		},
-		// "bad_path": {
-		// 	path:     "path/to/adrs",
-		// 	force:    true,
-		// 	index:    true,
-		// 	expected: []string(nil),
-		// 	err:      true,
-		// },
 	}
 
 	for name, test := range tests {
@@ -205,12 +148,8 @@ func TestRexConfig_createDefaultTemplates(t *testing.T) {
 		viper.Set("templates.path", defaultTemplatesPath)
 
 		r := NewRexConfig()
-		if test.cwd == "" {
-			r.setCWD()
-		} else {
-			r.cwd = test.cwd
-		}
-		err := r.createDefaultTemplates(test.templateSettings, r.cwd)
+
+		err := r.createDefaultTemplates(test.templateSettings)
 		t.Run(name, func(t *testing.T) {
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))
@@ -261,14 +200,6 @@ func TestRexConfig_writeTemplateFile(t *testing.T) {
 			expected:     "",
 			err:          false,
 		},
-		"wrong_path": {
-			configPath:   defaultTemplatesPath,
-			file:         []byte(""),
-			templateType: "adr4.tmpl",
-			cwd:          "pooppath/",
-			expected:     "",
-			err:          true,
-		},
 
 		"good_index": {
 			configPath:   defaultTemplatesPath,
@@ -285,12 +216,8 @@ func TestRexConfig_writeTemplateFile(t *testing.T) {
 		viper.Set("templates.path", defaultTemplatesPath)
 
 		r := NewRexConfig()
-		if test.cwd == "" {
-			r.setCWD()
-		} else {
-			r.cwd = test.cwd
-		}
-		err := r.writeTemplateFile(test.file, test.templateType, r.cwd)
+
+		err := r.writeTemplateFile(test.file, test.templateType)
 		t.Run(name, func(t *testing.T) {
 			if test.err {
 				assert.Error(t, err, fmt.Sprintf("Error: %v", err.Error()))

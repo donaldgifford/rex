@@ -42,8 +42,12 @@ Passing '--force, -f' will overwrite the templates if files
 are found.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !viper.GetBool("templates.enabled") {
-			cmd.Println("templates.enabled not set to true")
-			return
+			// cmd.Println("templates.enabled not set to true")
+			e := cmd.ErrOrStderr()
+			_, err := e.Write([]byte("templates.enabled not set to true\n"))
+			if err != nil {
+				cmd.Println(err.Error())
+			}
 		}
 		rex := rex.New()
 
