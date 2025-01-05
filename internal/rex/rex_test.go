@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
