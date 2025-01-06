@@ -63,18 +63,25 @@ func (rt *RexTemplate) Execute() {}
 // in .rex.yaml
 func (rt *RexTemplate) CreateADR(adr *adr.ADR) error {
 	// parse template from settings
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s%s", rt.Settings.TemplatePath, rt.Settings.AdrTemplate))
+	tmpl, err := template.ParseFiles(
+		fmt.Sprintf("%s%s", rt.Settings.TemplatePath, rt.Settings.AdrTemplate),
+	)
 	if err != nil {
 		return err
 	}
 
 	// strip adr title to create a file name to use
-	strippedTitle := strings.Join(strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "), "-")
+	strippedTitle := strings.Join(
+		strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "),
+		"-",
+	)
 	fileName := fmt.Sprintf("%d-%s.md", adr.ID, strippedTitle)
 
 	// create file on disk
 	var f *os.File
-	cleanFile := filepath.Clean(fmt.Sprintf("%s%s", viper.GetString("adr.path"), fileName))
+	cleanFile := filepath.Clean(
+		fmt.Sprintf("%s%s", viper.GetString("adr.path"), fileName),
+	)
 	f, err = os.Create(cleanFile)
 	if err != nil {
 		log.Fatal(err)
@@ -108,7 +115,10 @@ func (rt *RexTemplate) GenerateIndex(idx *adr.Index, force bool) error {
 
 	// check to see if index already exists
 	if fileExists(idx.DocPath + idx.IndexFileName) {
-		return fmt.Errorf("index file found at %s, to overwrite please pass --force flag", idx.DocPath+idx.IndexFileName)
+		return fmt.Errorf(
+			"index file found at %s, to overwrite please pass --force flag",
+			idx.DocPath+idx.IndexFileName,
+		)
 	}
 
 	err := rt.writeIndex(idx)
@@ -122,7 +132,13 @@ func (rt *RexTemplate) GenerateIndex(idx *adr.Index, force bool) error {
 // writeIndex writes the index to disk using the default embedded template
 func (rt *RexTemplate) writeIndex(idx *adr.Index) error {
 	// parse template from Settings
-	tmpl, err := template.ParseFiles(fmt.Sprintf("%s%s", rt.Settings.TemplatePath, rt.Settings.IndexTemplate))
+	tmpl, err := template.ParseFiles(
+		fmt.Sprintf(
+			"%s%s",
+			rt.Settings.TemplatePath,
+			rt.Settings.IndexTemplate,
+		),
+	)
 	if err != nil {
 		return err
 	}

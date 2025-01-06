@@ -44,10 +44,18 @@ func TestAdrCreateCMD(t *testing.T) {
 		err     bool
 	}{
 		"adr": {
-			file:    "tests/docs/adr/3-Test-ADR-Create.md",
-			content: parseContentWithDate("# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n"),
-			setArgs: []string{"--config=tests/.rex.yaml", "adr", "create", "--title=Test ADR Create", "--author=TESTER"},
-			err:     false,
+			file: "tests/docs/adr/3-Test-ADR-Create.md",
+			content: parseContentWithDate(
+				"# Test ADR Create\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | TESTER | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
+			),
+			setArgs: []string{
+				"--config=tests/.rex.yaml",
+				"adr",
+				"create",
+				"--title=Test ADR Create",
+				"--author=TESTER",
+			},
+			err: false,
 		},
 	}
 
@@ -70,7 +78,11 @@ func TestAdrCreateCMD(t *testing.T) {
 
 			b, err := ReadTestFile(test.file)
 			if err != nil {
-				t.Errorf("error opening test file: %v, err: %v", test.file, err.Error())
+				t.Errorf(
+					"error opening test file: %v, err: %v",
+					test.file,
+					err.Error(),
+				)
 			}
 			assert.Equal(t, test.content, string(b), "")
 		})

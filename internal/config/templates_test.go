@@ -206,8 +206,10 @@ func TestRexConfig_writeTemplateFile(t *testing.T) {
 		err          bool
 	}{
 		"good_adr": {
-			configPath:   defaultTemplatesPath,
-			file:         []byte("# {{ .Content.Title }}\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n"),
+			configPath: defaultTemplatesPath,
+			file: []byte(
+				"# {{ .Content.Title }}\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
+			),
 			templateType: "adr2.tmpl",
 			cwd:          "",
 			expected:     "# {{ .Content.Title }}\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| {{ .Content.Status }} | {{ .Content.Author }} | {{ .Content.Date }} | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
@@ -223,8 +225,10 @@ func TestRexConfig_writeTemplateFile(t *testing.T) {
 		},
 
 		"good_index": {
-			configPath:   defaultTemplatesPath,
-			file:         []byte("# {{ .Content.Title }}\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n{{- range .Content.Adrs }}\n| {{ .Id }} | {{ .Title }} | link |\n{{- end }}\n"),
+			configPath: defaultTemplatesPath,
+			file: []byte(
+				"# {{ .Content.Title }}\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n{{- range .Content.Adrs }}\n| {{ .Id }} | {{ .Title }} | link |\n{{- end }}\n",
+			),
 			templateType: "index2.tmpl",
 			cwd:          cwd,
 			expected:     "# {{ .Content.Title }}\n\n## ADRs\n\n| ID | Title | Link |\n| -- | ----- | ---- |\n{{- range .Content.Adrs }}\n| {{ .Id }} | {{ .Title }} | link |\n{{- end }}\n",

@@ -50,8 +50,15 @@ BuildOs: %s`
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "rex",
-	Version: fmt.Sprintf(buildTemplateOutput, buildVersion, buildDate, buildCommit, buildArch, buildOs),
+	Use: "rex",
+	Version: fmt.Sprintf(
+		buildTemplateOutput,
+		buildVersion,
+		buildDate,
+		buildCommit,
+		buildArch,
+		buildOs,
+	),
 	// Version: buildVersion,
 	Short: "Cli tool for managing ADR's",
 	Long: `Rex is a CLI tool for managing ADR's inside a codebase. It attempts to 
@@ -83,7 +90,8 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $CWD/.rex.yaml)")
+	rootCmd.PersistentFlags().
+		StringVar(&cfgFile, "config", "", "config file (default is $CWD/.rex.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

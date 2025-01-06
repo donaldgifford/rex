@@ -44,8 +44,13 @@ func TestGenerateTemplates_Cmd(t *testing.T) {
 			templatesPath:    "tests/docs/templates/",
 			content:          "",
 			indexFile:        "README.md",
-			setArgs:          []string{"--config=tests/.rex.yaml", "config", "generate", "templates"},
-			err:              false,
+			setArgs: []string{
+				"--config=tests/.rex.yaml",
+				"config",
+				"generate",
+				"templates",
+			},
+			err: false,
 		},
 		"templates_enabled": {
 			configPath:       "tests/dirs/docs/adr/",
@@ -53,8 +58,14 @@ func TestGenerateTemplates_Cmd(t *testing.T) {
 			templatesPath:    "tests/dirs/docs/templates/",
 			content:          "",
 			indexFile:        "README.md",
-			setArgs:          []string{"--config=tests/.dirs-enabled-rex.yaml", "config", "generate", "templates", "-f"},
-			err:              false,
+			setArgs: []string{
+				"--config=tests/.dirs-enabled-rex.yaml",
+				"config",
+				"generate",
+				"templates",
+				"-f",
+			},
+			err: false,
 		},
 	}
 
@@ -68,7 +79,11 @@ func TestGenerateTemplates_Cmd(t *testing.T) {
 			if test.templatesEnabled {
 
 				assert.Equal(t, true, fileExists(test.templatesPath+"adr.tmpl"))
-				assert.Equal(t, true, fileExists(test.templatesPath+"index.tmpl"))
+				assert.Equal(
+					t,
+					true,
+					fileExists(test.templatesPath+"index.tmpl"),
+				)
 			}
 		})
 	}

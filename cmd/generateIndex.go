@@ -55,5 +55,6 @@ see where to save the index file, name, and what template to use.`,
 func init() {
 	configGenerateCmd.AddCommand(generateIndexCmd)
 
-	generateIndexCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
+	generateIndexCmd.Flags().
+		BoolVarP(&force, "force", "f", false, "force overwritting config")
 }

@@ -63,11 +63,16 @@ func (r *RexConfig) GenerateDefaultTemplates(force bool) error {
 
 	// check templates exist, if they do dont overwrite
 	if fileExists(r.Settings().Templates.Path + eb.Settings.AdrTemplate) {
-		return fmt.Errorf("ADR template file exists at: %s, please set --force to overwrite", r.Settings().Templates.Path+eb.Settings.AdrTemplate)
+		return fmt.Errorf(
+			"ADR template file exists at: %s, please set --force to overwrite",
+			r.Settings().Templates.Path+eb.Settings.AdrTemplate)
 	}
 
 	if fileExists(r.Settings().Templates.Path + eb.Settings.IndexTemplate) {
-		return fmt.Errorf("index template file exists at: %s, please set --force to overwrite", r.Settings().Templates.Path+eb.Settings.IndexTemplate)
+		return fmt.Errorf(
+			"index template file exists at: %s, please set --force to overwrite",
+			r.Settings().Templates.Path+eb.Settings.IndexTemplate,
+		)
 	}
 
 	err := r.createDefaultTemplates(eb)
@@ -79,9 +84,13 @@ func (r *RexConfig) GenerateDefaultTemplates(force bool) error {
 }
 
 // createDefaultTemplates uses the template settings to create the default templates on disk
-func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTemplate) error {
+func (r *RexConfig) createDefaultTemplates(
+	templateSettings templates.EmbeddedTemplate,
+) error {
 	// read default adr template from embedded template
-	a, err := templateSettings.Read(templateSettings.Settings.TemplatePath + templateSettings.Settings.AdrTemplate)
+	a, err := templateSettings.Read(
+		templateSettings.Settings.TemplatePath + templateSettings.Settings.AdrTemplate,
+	)
 	if err != nil {
 		return err
 	}
@@ -93,7 +102,9 @@ func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTe
 	}
 
 	// read default Index template from embedded template
-	t, err := templateSettings.Read(templateSettings.Settings.TemplatePath + templateSettings.Settings.IndexTemplate)
+	t, err := templateSettings.Read(
+		templateSettings.Settings.TemplatePath + templateSettings.Settings.IndexTemplate,
+	)
 	if err != nil {
 		return err
 	}
@@ -109,7 +120,9 @@ func (r *RexConfig) createDefaultTemplates(templateSettings templates.EmbeddedTe
 
 // writeTemplateFile writes a template to disk
 func (r *RexConfig) writeTemplateFile(file []byte, templateType string) error {
-	templateFile, err := os.Create(fmt.Sprintf("%s%s", r.Templates.Path, templateType))
+	templateFile, err := os.Create(
+		fmt.Sprintf("%s%s", r.Templates.Path, templateType),
+	)
 	if err != nil {
 		return err
 	}

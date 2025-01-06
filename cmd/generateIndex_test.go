@@ -55,8 +55,13 @@ func TestGenerateIndex_Cmd(t *testing.T) {
 			templatesPath:    "",
 			content:          "",
 			indexFile:        "README.md",
-			setArgs:          []string{"--config=tests/.rex.yaml", "config", "generate", "index"},
-			err:              false,
+			setArgs: []string{
+				"--config=tests/.rex.yaml",
+				"config",
+				"generate",
+				"index",
+			},
+			err: false,
 		},
 		"templates_enabled": {
 			configPath:       "tests/dirs/docs/adr/",
@@ -64,8 +69,13 @@ func TestGenerateIndex_Cmd(t *testing.T) {
 			templatesPath:    "tests/dirs/docs/templates/",
 			content:          "",
 			indexFile:        "README.md",
-			setArgs:          []string{"--config=tests/.dirs-enabled-rex.yaml", "config", "generate", "index"},
-			err:              false,
+			setArgs: []string{
+				"--config=tests/.dirs-enabled-rex.yaml",
+				"config",
+				"generate",
+				"index",
+			},
+			err: false,
 		},
 	}
 

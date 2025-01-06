@@ -71,5 +71,6 @@ func init() {
 	adrCmd.AddCommand(adrCreateCmd)
 
 	adrCreateCmd.Flags().StringVarP(&title, "title", "t", "", "Title for ADR")
-	adrCreateCmd.Flags().StringVarP(&author, "author", "a", "", "Author for ADR")
+	adrCreateCmd.Flags().
+		StringVarP(&author, "author", "a", "", "Author for ADR")
 }

@@ -113,8 +113,10 @@ func TestEmbeddedCreateADR(t *testing.T) {
 		err     bool
 	}{
 		"adr": {
-			file:    "3-Test-3.md",
-			content: parseContentWithDate("# Test 3\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | Author | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n"),
+			file: "3-Test-3.md",
+			content: parseContentWithDate(
+				"# Test 3\n\n| Status | Author         |  Created | Last Update | Current Version |\n| ------ | -------------- | -------- | ----------- | --------------- |\n| Draft | Author | %s | N/A | v0.0.1 |\n\n## Context and Problem Statement\n\n## Decision Drivers\n\n## Considered Options\n\n## Decision Outcome\n",
+			),
 			adr: &adr.ADR{
 				Content: adr.Content{
 					Title:  "Test 3",
@@ -140,12 +142,22 @@ func TestEmbeddedCreateADR(t *testing.T) {
 			tmp := NewTemplate()
 			err := tmp.CreateADR(test.adr)
 			if err != nil {
-				t.Errorf("error creating test file: %v, err: %v", test.file, err.Error())
+				t.Errorf(
+					"error creating test file: %v, err: %v",
+					test.file,
+					err.Error(),
+				)
 			}
 
-			b, err := ReadTestFile(fmt.Sprintf("%s%s", defaultAdrPath, test.file))
+			b, err := ReadTestFile(
+				fmt.Sprintf("%s%s", defaultAdrPath, test.file),
+			)
 			if err != nil {
-				t.Errorf("error opening test file: %v, err: %v", test.file, err.Error())
+				t.Errorf(
+					"error opening test file: %v, err: %v",
+					test.file,
+					err.Error(),
+				)
 			}
 			assert.Equal(t, test.content, string(b), "")
 
@@ -201,12 +213,22 @@ func TestEmbeddedGenereateIndex(t *testing.T) {
 			tmp := NewTemplate()
 			err := tmp.GenerateIndex(test.idx, test.force)
 			if err != nil {
-				t.Errorf("error creating test file: %v, err: %v", test.file, err.Error())
+				t.Errorf(
+					"error creating test file: %v, err: %v",
+					test.file,
+					err.Error(),
+				)
 			}
 
-			b, err := ReadTestFile(fmt.Sprintf("%s%s", defaultAdrPath, test.file))
+			b, err := ReadTestFile(
+				fmt.Sprintf("%s%s", defaultAdrPath, test.file),
+			)
 			if err != nil {
-				t.Errorf("error opening test file: %v, err: %v", test.file, err.Error())
+				t.Errorf(
+					"error opening test file: %v, err: %v",
+					test.file,
+					err.Error(),
+				)
 			}
 			assert.Equal(t, test.content, string(b), "")
 
