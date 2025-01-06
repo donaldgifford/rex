@@ -1,0 +1,9 @@
+# {{ .Content.Title }}
+
+## ADRs
+
+| ID | Title | Link |
+| -- | ----- | ---- |
+{{- range .Content.Adrs }}
+| {{ .Id }} | {{ .Title }} | link |
+{{- end }}

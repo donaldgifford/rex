@@ -64,5 +64,6 @@ are found.`,
 func init() {
 	configGenerateCmd.AddCommand(generateTemplatesCmd)
 
-	generateTemplatesCmd.Flags().BoolVarP(&force, "force", "f", false, "force overwritting config")
+	generateTemplatesCmd.Flags().
+		BoolVarP(&force, "force", "f", false, "force overwritting config")
 }

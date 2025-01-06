@@ -45,6 +45,7 @@ linters-settings:
   lll:
     # tab width in spaces. Default to 1.
     tab-width: 1
+    line-length: 80
 
   unused:
     # treat code as a program (not a library) and report unused exported identifiers; default is false.

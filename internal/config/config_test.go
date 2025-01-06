@@ -140,7 +140,9 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	err = createTestADRFile(fmt.Sprintf("%s%s", templatesPath+"poop/adr/", "adr.tmpl"))
+	err = createTestADRFile(
+		fmt.Sprintf("%s%s", templatesPath+"poop/adr/", "adr.tmpl"),
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -152,7 +154,9 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	err = createTestADRFile(fmt.Sprintf("%s%s", templatesPath+"poop/index/", "index.tmpl"))
+	err = createTestADRFile(
+		fmt.Sprintf("%s%s", templatesPath+"poop/index/", "index.tmpl"),
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -270,7 +274,11 @@ func TestNewRexConfig(t *testing.T) {
 	}
 
 	if config.Templates != c.Templates {
-		t.Errorf("Templates settings dont match: %v, %v", config.Templates, c.Templates)
+		t.Errorf(
+			"Templates settings dont match: %v, %v",
+			config.Templates,
+			c.Templates,
+		)
 	}
 
 	if config.Pages != c.Pages {
@@ -319,7 +327,11 @@ func TestRexConfigSettings(t *testing.T) {
 	}
 
 	if config.Templates != c.Templates {
-		t.Errorf("Templates settings dont match: %v, %v", config.Templates, c.Templates)
+		t.Errorf(
+			"Templates settings dont match: %v, %v",
+			config.Templates,
+			c.Templates,
+		)
 	}
 
 	if config.Pages != c.Pages {

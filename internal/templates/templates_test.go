@@ -267,9 +267,24 @@ func TestNewTemplate(t *testing.T) {
 				viper.Set("templates.enabled", false)
 			}
 			a := NewTemplate()
-			assert.Equal(t, test.settings.AdrTemplate, a.GetSettings().AdrTemplate, "")
-			assert.Equal(t, test.settings.TemplatePath, a.GetSettings().TemplatePath, "")
-			assert.Equal(t, test.settings.IndexTemplate, a.GetSettings().IndexTemplate, "")
+			assert.Equal(
+				t,
+				test.settings.AdrTemplate,
+				a.GetSettings().AdrTemplate,
+				"",
+			)
+			assert.Equal(
+				t,
+				test.settings.TemplatePath,
+				a.GetSettings().TemplatePath,
+				"",
+			)
+			assert.Equal(
+				t,
+				test.settings.IndexTemplate,
+				a.GetSettings().IndexTemplate,
+				"",
+			)
 		})
 	}
 }

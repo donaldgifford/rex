@@ -123,24 +123,99 @@ func TestCreateRexConfigFile(t *testing.T) {
 			}
 
 			// adr
-			assert.Equal(t, test.defaultValues["defaultAdrPath"], c.ADR.Path, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultAdrIndexPage"], c.ADR.IndexPage, "ADR IndexPage")
-			assert.Equal(t, test.defaultValues["defaultAdrAddToIndex"], c.ADR.AddToIndex, "ADR AddToIndex")
+			assert.Equal(
+				t,
+				test.defaultValues["defaultAdrPath"],
+				c.ADR.Path,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultAdrIndexPage"],
+				c.ADR.IndexPage,
+				"ADR IndexPage",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultAdrAddToIndex"],
+				c.ADR.AddToIndex,
+				"ADR AddToIndex",
+			)
 			// template
-			assert.Equal(t, test.defaultValues["defaultTemplatesPath"], c.Templates.Path, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultTemplatesEnabled"], c.Templates.Enabled, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultTemplatesAdrDefault"], c.Templates.ADR.Default, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultTemplatesAdrIndex"], c.Templates.ADR.Index, "ADR Path")
+			assert.Equal(
+				t,
+				test.defaultValues["defaultTemplatesPath"],
+				c.Templates.Path,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultTemplatesEnabled"],
+				c.Templates.Enabled,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultTemplatesAdrDefault"],
+				c.Templates.ADR.Default,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultTemplatesAdrIndex"],
+				c.Templates.ADR.Index,
+				"ADR Path",
+			)
 			// pages
-			assert.Equal(t, test.defaultValues["defaultEnabledGithubPages"], c.EnableGithubPages, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultPagesIndex"], c.Pages.Index, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultPagesWebConfig"], c.Pages.Web.Config, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultPagesWebLayoutDefault"], c.Pages.Web.Layout.Default, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultPagesWebLayoutAdr"], c.Pages.Web.Layout.ADR, "ADR Path")
+			assert.Equal(
+				t,
+				test.defaultValues["defaultEnabledGithubPages"],
+				c.EnableGithubPages,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultPagesIndex"],
+				c.Pages.Index,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultPagesWebConfig"],
+				c.Pages.Web.Config,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultPagesWebLayoutDefault"],
+				c.Pages.Web.Layout.Default,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultPagesWebLayoutAdr"],
+				c.Pages.Web.Layout.ADR,
+				"ADR Path",
+			)
 			// extras
-			assert.Equal(t, test.defaultValues["defaultExtras"], c.Extras, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultExtraPagesInstall"], c.ExtraPages.Install, "ADR Path")
-			assert.Equal(t, test.defaultValues["defaultExtraPagesUsage"], c.ExtraPages.Usage, "ADR Path")
+			assert.Equal(
+				t,
+				test.defaultValues["defaultExtras"],
+				c.Extras,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultExtraPagesInstall"],
+				c.ExtraPages.Install,
+				"ADR Path",
+			)
+			assert.Equal(
+				t,
+				test.defaultValues["defaultExtraPagesUsage"],
+				c.ExtraPages.Usage,
+				"ADR Path",
+			)
 		})
 	}
 }

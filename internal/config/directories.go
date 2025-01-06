@@ -38,8 +38,6 @@ func (r *RexConfig) GenerateDirectories() error {
 		if err != nil && !os.IsExist(err) {
 			return err
 		}
-
-		return nil
 	}
 
 	// mkdirall with path string

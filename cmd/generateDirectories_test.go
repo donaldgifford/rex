@@ -52,16 +52,26 @@ func TestGenerateDirectories_Cmd(t *testing.T) {
 			templatesEnabled: false,
 			templatesPath:    "",
 			content:          "",
-			setArgs:          []string{"--config=tests/.dirs-rex.yaml", "config", "generate", "directories"},
-			err:              false,
+			setArgs: []string{
+				"--config=tests/.dirs-rex.yaml",
+				"config",
+				"generate",
+				"directories",
+			},
+			err: false,
 		},
 		"templates_enabled": {
 			configPath:       "tests/dirs/docs/adr/",
 			templatesEnabled: true,
 			templatesPath:    "tests/dirs/docs/templates/",
 			content:          "",
-			setArgs:          []string{"--config=tests/.dirs-enabled-rex.yaml", "config", "generate", "directories"},
-			err:              false,
+			setArgs: []string{
+				"--config=tests/.dirs-enabled-rex.yaml",
+				"config",
+				"generate",
+				"directories",
+			},
+			err: false,
 		},
 		// TODO: somehow test an error from mkdirall
 		// "default_error": {

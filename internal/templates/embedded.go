@@ -66,13 +66,19 @@ func (et *EmbeddedTemplate) Execute() {}
 // CreateADR creates adr files using the default embedded template
 func (et *EmbeddedTemplate) CreateADR(adr *adr.ADR) error {
 	// get the default template from settings and parse it
-	tmpl, err := template.ParseFS(DefaultRexTemplates, fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.AdrTemplate))
+	tmpl, err := template.ParseFS(
+		DefaultRexTemplates,
+		fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.AdrTemplate),
+	)
 	if err != nil {
 		return err
 	}
 
 	// strip the ADR content to create a file name to use
-	strippedTitle := strings.Join(strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "), "-")
+	strippedTitle := strings.Join(
+		strings.Split(strings.Trim(adr.Content.Title, "\n \t"), " "),
+		"-",
+	)
 	fileName := fmt.Sprintf("%d-%s.md", adr.ID, strippedTitle)
 
 	// create file on disk
@@ -111,7 +117,10 @@ func (et *EmbeddedTemplate) GenerateIndex(idx *adr.Index, force bool) error {
 
 	// check index exists
 	if fileExists(idx.DocPath + idx.IndexFileName) {
-		return fmt.Errorf("index file found at %s, to overwrite please pass --force flag", idx.DocPath+idx.IndexFileName)
+		return fmt.Errorf(
+			"index file found at %s, to overwrite please pass --force flag",
+			idx.DocPath+idx.IndexFileName,
+		)
 	}
 
 	err := et.writeIndex(idx)
@@ -125,7 +134,14 @@ func (et *EmbeddedTemplate) GenerateIndex(idx *adr.Index, force bool) error {
 // writeIndex writes the index to disk using the default embedded template
 func (et *EmbeddedTemplate) writeIndex(idx *adr.Index) error {
 	// parse template from Settings
-	tmpl, err := template.ParseFS(DefaultRexTemplates, fmt.Sprintf("%s%s", et.Settings.TemplatePath, et.Settings.IndexTemplate))
+	tmpl, err := template.ParseFS(
+		DefaultRexTemplates,
+		fmt.Sprintf(
+			"%s%s",
+			et.Settings.TemplatePath,
+			et.Settings.IndexTemplate,
+		),
+	)
 	if err != nil {
 		return err
 	}

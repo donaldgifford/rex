@@ -38,7 +38,12 @@ func ReadTestFile(file string) ([]byte, error) {
 
 // path: "tests/docs/adr/"
 
-func createConfigFile(file string, adrPath string, templatesEnabled bool, templatePath string) error {
+func createConfigFile(
+	file string,
+	adrPath string,
+	templatesEnabled bool,
+	templatePath string,
+) error {
 	rexConfig := fmt.Sprintf(`adr:
   path: %s
   index_page: "README.md"
@@ -142,19 +147,34 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	err = createConfigFile("tests/.rex.yaml", "tests/docs/adr/", false, "tests/docs/templates/")
+	err = createConfigFile(
+		"tests/.rex.yaml",
+		"tests/docs/adr/",
+		false,
+		"tests/docs/templates/",
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
 	}
 
-	err = createConfigFile("tests/.dirs-rex.yaml", "tests/dirs/docs/adr/", false, "tests/dirs/docs/templates/")
+	err = createConfigFile(
+		"tests/.dirs-rex.yaml",
+		"tests/dirs/docs/adr/",
+		false,
+		"tests/dirs/docs/templates/",
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
 	}
 
-	err = createConfigFile("tests/.dirs-enabled-rex.yaml", "tests/dirs/docs/adr/", true, "tests/dirs/docs/templates/")
+	err = createConfigFile(
+		"tests/.dirs-enabled-rex.yaml",
+		"tests/dirs/docs/adr/",
+		true,
+		"tests/dirs/docs/templates/",
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
@@ -172,13 +192,23 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	err = createConfigFile("tests/.dirs-error-rex.yaml", "tests/docs/adr/1-test1.md", false, "tests/dirs/docs/templates/")
+	err = createConfigFile(
+		"tests/.dirs-error-rex.yaml",
+		"tests/docs/adr/1-test1.md",
+		false,
+		"tests/dirs/docs/templates/",
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
 	}
 
-	err = createConfigFile("tests/.templates-rex.yaml", "tests/templates/docs/adr/", false, "tests/templates/docs/templates/")
+	err = createConfigFile(
+		"tests/.templates-rex.yaml",
+		"tests/templates/docs/adr/",
+		false,
+		"tests/templates/docs/templates/",
+	)
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)

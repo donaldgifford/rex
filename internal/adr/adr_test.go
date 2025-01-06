@@ -162,7 +162,9 @@ func TestNewADRConfig(t *testing.T) {
 	// Test that NewADRConfig reads configuration settings correctly
 	// viperSetHelper()
 	config := NewADRConfig()
-	if config.Path != defaultAdrPath || config.IndexPage != defaultAdrIndexPage || config.AddToIndex != defaultAdrAddToIndex {
+	if config.Path != defaultAdrPath ||
+		config.IndexPage != defaultAdrIndexPage ||
+		config.AddToIndex != defaultAdrAddToIndex {
 		t.Errorf("NewADRConfig returned incorrect settings: %v", config)
 	}
 }
@@ -172,7 +174,9 @@ func TestNewADR(t *testing.T) {
 	// viperSetHelper()
 	adrT := NewADR()
 
-	if adrT.Config.Path != defaultAdrPath || adrT.Config.IndexPage != defaultAdrIndexPage || adrT.Config.AddToIndex != defaultAdrAddToIndex {
+	if adrT.Config.Path != defaultAdrPath ||
+		adrT.Config.IndexPage != defaultAdrIndexPage ||
+		adrT.Config.AddToIndex != defaultAdrAddToIndex {
 		t.Errorf("NewADRConfig returned incorrect settings: %v", adrT.Config)
 	}
 }
