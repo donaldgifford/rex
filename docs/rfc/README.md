@@ -20,7 +20,7 @@ implementation details.
 ## Creating a New RFC
 
 ```bash
-make rfc "Your RFC Title"
+rex rfc create "Your RFC Title"
 ```
 
 This will create a new RFC file with an auto-incremented ID.
@@ -32,10 +32,9 @@ This will create a new RFC file with an auto-incremented ID.
 - **Accepted**: Approved and ready for implementation
 - **Rejected**: Not moving forward with this proposal
 - **Superseded**: Replaced by another RFC
-<!-- BEGIN AUTO-GENERATED -->
+
 ## All RFCs
 
 | ID | Title | Status | Link |
 |----|-------|--------|------|
-
-<!-- END AUTO-GENERATED -->
+| 0001 | Rex Documentation Management System | Draft | [0001-rex-documentation-management-system.md](0001-rex-documentation-management-system.md) |
