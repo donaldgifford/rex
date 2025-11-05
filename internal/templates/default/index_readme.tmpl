@@ -1,6 +1,0 @@
-# ADR List
-
-## ADRs
-
-| ID | Title | Link |
-| -- | ----- | ---- |

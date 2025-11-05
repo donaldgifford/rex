@@ -1,5 +1,5 @@
 /*
-Copyright © 2024-2025 Donald Gifford <dgifford06@gmail.com>
+Copyright © 2025 Donald Gifford
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,53 +25,25 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/donaldgifford/rex/internal/install"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	cfgFile string
-	force   = false
-
-	// build variables
-	buildVersion = "0.0.1"
-	buildDate    = "today"
-	buildCommit  = "1234"
-	buildArch    = "mac"
-	buildOs      = "arm"
-
-	buildTemplateOutput = `%s
-BuildDate: %s
-BuildCommit: %s
-BuildArch: %s
-BuildOs: %s`
-)
+var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use: "rex",
-	Version: fmt.Sprintf(
-		buildTemplateOutput,
-		buildVersion,
-		buildDate,
-		buildCommit,
-		buildArch,
-		buildOs,
-	),
-	// Version: buildVersion,
-	Short: "Cli tool for managing ADR's",
-	Long: `Rex is a CLI tool for managing ADR's inside a codebase. It attempts to 
-solve some issues with other ADR tooling. For example:
+	Use:   "rex",
+	Short: "A brief description of your application",
+	Long: `A longer description that spans multiple lines and likely contains
+examples and usage of using your application. For example:
 
-Primarily it creates a default to start from for generating markdown files to use
-as starting points for ADR. It also allows for you to change those templates as 
-needed. Lastly, it can generate html from the templates to be hosted on something
-like Github Pages, helping with overall documentation workflows.`,
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {
-	// },
+	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -90,8 +62,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().
-		StringVar(&cfgFile, "config", "", "config file (default is $CWD/.rex.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rex.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -104,25 +75,20 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Get current working directory
-		cwd, err := os.Getwd()
+		// Find home directory.
+		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in current directory with name ".rex" (without extension).
-		viper.AddConfigPath(cwd)
+		// Search config in home directory with name ".rex" (without extension).
+		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".rex")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// if no config found, create one.
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Config file not found, creating one at .rex.yaml")
-		fmt.Println("Please rerun command")
-		if err := install.CreateRexConfigFile(); err != nil {
-			fmt.Println("Error creating rex.yaml file:", err.Error())
-		}
-		os.Exit(1)
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 }

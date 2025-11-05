@@ -1,0 +1,102 @@
+# Auto-labeling configuration for PRs based on file paths
+# See: https://github.com/actions/labeler
+
+# Simple labels (legacy compatibility)
+go:
+  - changed-files:
+      - any-glob-to-any-file: "cmd/**.go"
+      - any-glob-to-any-file: "internal/**.go"
+      - any-glob-to-any-file: "pkg/**.go"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file: "go.mod"
+      - any-glob-to-any-file: "go.sum"
+      - any-glob-to-any-file: mise.toml
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**/*'
+          - '**/*.md'
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*_test.go'
+          - 'test/**/*'
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/workflows/**/*'
+          - '.github/actions/**/*'
+          - 'Makefile'
+
+docker:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docker-compose*.yml'
+          - 'Dockerfile*'
+          - 'deployments/**/*'
+          - 'k8s/**/*'
+
+feature:
+  - head-branch: ["^feature", "feature"]
+
+# Project Specific
+# SDK Lables
+sdk:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'plugins/sdk/**/*'
+          - 'pkg/plugin/**/*'
+
+# Plugin labels
+plugin:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'plugins/**/collectors/**/*'
+          - 'plugins/official/collectors/**/*'
+          - 'plugins/examples/collectors/**/*'
+          - 'plugins/**/auditors/**/*'
+          - 'plugins/official/auditors/**/*'
+          - 'plugins/examples/auditors/**/*'
+          - 'plugins/**/notifiers/**/*'
+          - 'plugins/official/notifiers/**/*'
+          - 'plugins/examples/notifiers/**/*'
+
+
+# Plugin labels
+api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'pkg/api/**/*'
+          - 'internal/server/**/*'
+          - 'cmd/shitwiz-server/**/*'
+          - 'pkg/database/**/*'
+          - 'pkg/models/**/*'
+          - 'migrations/**/*'
+          - 'pkg/auth/**/*'
+          - 'internal/auth/**/*'
+          - 'pkg/scheduler/**/*'
+          - 'internal/scheduler/**/*'
+          - 'cmd/shitwiz-scheduler/**/*'
+          - 'pkg/worker/**/*'
+          - 'internal/worker/**/*'
+          - 'cmd/shitwiz-worker/**/*'
+          - 'pkg/queue/**/*'
+          - 'pkg/config/**/*'
+          - 'configs/**/*'
+          - 'pkg/logging/**/*'
+          - 'plugins/sdk/**/*'
+          - 'pkg/plugin/**/*'
+
+
+# ui labels
+# ui:
+#   - changed-files:
+#       - any-glob-to-any-file:
+
+
+

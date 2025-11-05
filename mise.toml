@@ -1,0 +1,24 @@
+# Rex Tool Configuration
+# mise manages: Go version + non-Go tools
+# Go tools installed via: make tools (uses go install)
+
+[tools]
+# Core language
+go = "1.25.2"
+
+# Non-Go platform-specific tools
+golangci-lint = "2.5.0" # Binary is faster than go install version
+goreleaser = "2.11.2"   # Release automation
+
+# Go platform-specific tools
+"go:github.com/spf13/cobra-cli" = "latest"
+"go:gotest.tools/gotestsum" = "latest"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
+
+# Node.js based tools
+markdownlint-cli2 = "0.18.1"
+prettier = "latest"
+
+# YAML tools
+yamllint = "latest" # YAML linting
+yamlfmt = "latest"  # YAML formatting
