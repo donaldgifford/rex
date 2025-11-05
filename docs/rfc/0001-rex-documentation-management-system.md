@@ -11,7 +11,9 @@ Rex is currently a collection of bash scripts and makefiles that manage document
 
 This RFC proposes refactoring Rex into a single Go CLI tool with embedded templates that can be installed once and used across all repositories. The CLI will standardize documentation workflows, eliminate the need for repository-specific tooling, and make it trivial to initialize new projects with proper documentation structure.
 
-The core insight is simple: Rex is fundamentally about creating and managing markdown files in opinionated formats. By moving this logic into a distributable binary with Go's template embedding, we gain portability, consistency, and ease of use while maintaining the simplicity of markdown-based documentation.
+The core insight is simple: Rex is fundamentally about creating and managing markdown files in opinionated formats. By moving this logic into a distributable binary with Go's template embedding and using SQLite as a query cache, we gain portability, consistency, fast queries, and ease of use while maintaining the simplicity of markdown-based documentation.
+
+**Key architectural decision:** Markdown files remain the source of truth (git-friendly), while a local SQLite database (`.rex.db`, gitignored) serves as a fast query cache. The database auto-rebuilds from markdown when stale or missing, eliminating the need to parse 100+ files for every `rex task list` command.
 
 ## Problem Statement
 
@@ -101,8 +103,9 @@ The CLI provides intuitive commands like `rex init`, `rex adr create`, `rex task
 1. **Single Binary Distribution** - One `rex` binary installed globally, no per-repo tooling
 2. **Embedded Templates** - All templates bundled in the binary using Go embed, ensuring version consistency
 3. **Opinionated Defaults** - Strong conventions for file structure, naming, and formats with escape hatches for customization
-4. **Markdown First** - Files remain plain markdown with YAML frontmatter—no proprietary formats
-5. **Cross-Repository Consistency** - Same version of Rex produces identical workflows across all projects
+4. **Markdown First** - Files remain plain markdown with YAML frontmatter—no proprietary formats (source of truth)
+5. **SQLite Cache** - Local `.rex.db` for fast queries; auto-rebuilt from markdown when stale/missing (gitignored)
+6. **Cross-Repository Consistency** - Same version of Rex produces identical workflows across all projects
 
 ### High-Level Architecture
 
@@ -111,22 +114,33 @@ rex (Go CLI Binary)
 ├── cmd/
 │   ├── root.go           - Root command and global flags
 │   ├── init.go           - Initialize new repo with docs/ structure
+│   ├── rebuild.go        - Rebuild .rex.db from markdown files
 │   ├── adr/
-│   │   ├── create.go     - Create new ADR
-│   │   └── update.go     - Update ADR README
+│   │   ├── create.go     - Create new ADR (writes .md + updates DB)
+│   │   ├── update.go     - Update ADR README
+│   │   └── list.go       - List ADRs (queries DB)
 │   ├── rfc/
-│   │   ├── create.go     - Create new RFC
-│   │   └── update.go     - Update RFC README
+│   │   ├── create.go     - Create new RFC (writes .md + updates DB)
+│   │   ├── update.go     - Update RFC README
+│   │   └── list.go       - List RFCs (queries DB)
 │   ├── task/
-│   │   ├── create.go     - Create new task
-│   │   ├── complete.go   - Mark task complete
-│   │   ├── list.go       - List/filter tasks
-│   │   ├── stats.go      - Show task statistics
+│   │   ├── create.go     - Create new task (writes .md + updates DB)
+│   │   ├── complete.go   - Mark task complete (updates .md + DB)
+│   │   ├── list.go       - List/filter tasks (queries DB)
+│   │   ├── stats.go      - Show task statistics (queries DB)
 │   │   └── update.go     - Update task READMEs
 │   └── plan/
-│       ├── create.go     - Create new plan
+│       ├── create.go     - Create new plan (writes .md + updates DB)
 │       └── update.go     - Update plan README
 ├── internal/
+│   ├── db/
+│   │   ├── db.go         - SQLite connection management
+│   │   ├── schema.go     - Database schema and migrations
+│   │   ├── adr.go        - ADR table operations
+│   │   ├── rfc.go        - RFC table operations
+│   │   ├── task.go       - Task table operations
+│   │   ├── plan.go       - Plan table operations
+│   │   └── rebuild.go    - Scan docs/ and rebuild DB
 │   ├── templates/
 │   │   ├── embed.go      - Embed all .md templates
 │   │   ├── adr.md
@@ -158,54 +172,93 @@ rex (Go CLI Binary)
     └── plans/
         ├── template.md
         └── README.md
+
+Repository Structure:
+├── .rex.db               - SQLite cache (gitignored)
+├── .rex.yaml             - Optional config
+└── docs/
+    ├── adr/              - ADR markdown files (source of truth)
+    ├── rfc/              - RFC markdown files (source of truth)
+    ├── tasks/            - Task markdown files (source of truth)
+    └── plans/            - Plan markdown files (source of truth)
 ```
 
 **Key Components:**
 
 - **CLI Layer (cmd/)**: Cobra-based commands matching current make targets
+- **Database Layer (internal/db/)**: SQLite cache for fast queries; auto-syncs with markdown
 - **Template Engine (internal/templates/)**: Go templates embedded via `//go:embed`
-- **Parser (internal/parser/)**: Extract frontmatter, status, titles from existing files
-- **Generator (internal/generator/)**: Create files from templates with substitutions
+- **Parser (internal/parser/)**: Extract frontmatter, status, titles from markdown files
+- **Generator (internal/generator/)**: Create markdown files from templates with substitutions
 - **Config (internal/config/)**: Optional `.rex.yaml` for customization
+
+**Data Flow:**
+
+```
+CREATE/UPDATE:
+  User → CLI → Write .md file → Update SQLite → Done
+
+LIST/QUERY:
+  User → CLI → Query SQLite → Display results
+
+REBUILD:
+  User → CLI → Scan docs/ → Parse all .md → Rebuild SQLite → Done
+
+AUTO-SYNC:
+  CLI detects .rex.db missing/stale → Auto-rebuild from docs/ → Continue
+```
 
 ### Key Architectural Decisions
 
-- **Go embed package** for template bundling (see ADR-TBD-001)
-- **Cobra CLI framework** for command structure and help system (see ADR-TBD-002)
-- **YAML frontmatter parsing** using gopkg.in/yaml.v3 (see ADR-TBD-003)
-- **Semantic versioning** for rex binary releases (see ADR-TBD-004)
+- **SQLite as cache layer** using modernc.org/sqlite (pure Go, no CGO) with markdown as source of truth (see ADR-TBD-001)
+- **Go embed package** for template bundling (see ADR-TBD-002)
+- **Cobra CLI framework** for command structure and help system (see ADR-TBD-003)
+- **YAML frontmatter parsing** using gopkg.in/yaml.v3 (see ADR-TBD-004)
+- **Auto-rebuild strategy** for keeping SQLite cache in sync with markdown files (see ADR-TBD-005)
+- **Semantic versioning** for rex binary releases (see ADR-TBD-006)
 
 ## Implementation Plan
 
-### Phase 1: Foundation and Core Commands
+### Phase 1: Foundation, Database, and Core Commands
 
 **Scope:**
 - Set up Go project structure with Cobra CLI
+- Integrate SQLite (modernc.org/sqlite) with schema for ADRs, RFCs, Tasks, Plans
 - Implement `rex init` to create docs/ directory structure
-- Implement `rex adr create` replacing `create-adr.sh`
+- Implement `rex rebuild` to scan docs/ and populate SQLite
+- Implement auto-rebuild when .rex.db missing or stale
+- Implement `rex adr create` replacing `create-adr.sh` (writes .md + updates DB)
+- Implement `rex adr list` to query ADRs from DB
 - Implement `rex adr update` replacing `update-adr-readme.sh`
 - Embed ADR templates using Go embed
-- Add basic tests for file creation and parsing
+- Add tests for file creation, parsing, and DB operations
 
 **Success Criteria:**
-- `rex adr create "Title"` creates properly formatted ADR file
-- `rex adr update` regenerates docs/adr/README.md table
+- `rex adr create "Title"` creates .md file and updates .rex.db
+- `rex adr list` queries DB and displays results
+- `rex adr list --status Draft` filters correctly
+- `rex rebuild` scans docs/adr/ and populates DB
+- Auto-rebuild triggers when .rex.db missing
 - ADR template embedded in binary
-- Zero external dependencies (no yq, sed, awk required)
+- Zero external dependencies (no yq, sed, awk, no CGO required)
 
-**Estimated Effort:** 2 weeks
+**Estimated Effort:** 3 weeks (increased for DB integration)
 
 ### Phase 2: RFC Support
 
 **Scope:**
-- Implement `rex rfc create` replacing `create-rfc.sh`
+- Implement `rex rfc create` replacing `create-rfc.sh` (writes .md + updates DB)
+- Implement `rex rfc list` to query RFCs from DB
 - Implement `rex rfc update` replacing `update-rfc-readme.sh`
 - Embed RFC templates
+- Add RFC table to SQLite schema
 - Add RFC parsing and README generation
 
 **Success Criteria:**
-- `rex rfc create "Title"` creates RFC with auto-incremented ID
+- `rex rfc create "Title"` creates RFC with auto-incremented ID and updates DB
+- `rex rfc list --status Draft` filters correctly
 - `rex rfc update` regenerates docs/rfc/README.md
+- `rex rebuild` includes RFCs in DB sync
 - Feature parity with existing RFC bash scripts
 
 **Estimated Effort:** 1 week
@@ -213,36 +266,42 @@ rex (Go CLI Binary)
 ### Phase 3: Task Management
 
 **Scope:**
-- Implement `rex task create` with interactive prompts
-- Implement `rex task complete TASK-NNN`
-- Implement `rex task list` with filtering (TYPE, STATUS, PRIORITY)
-- Implement `rex task stats` for statistics dashboard
+- Implement `rex task create` with interactive prompts (writes .md + updates DB)
+- Implement `rex task complete TASK-NNN` (updates .md + DB, moves file)
+- Implement `rex task list` with filtering (TYPE, STATUS, PRIORITY) - queries DB
+- Implement `rex task stats` for statistics dashboard - queries DB with aggregations
 - Implement `rex task update` for README regeneration
 - Embed task templates with YAML frontmatter
+- Add task table to SQLite schema with all frontmatter fields
 
 **Success Criteria:**
 - Full feature parity with bash task management scripts
 - Interactive prompts for metadata collection
-- Filtering and statistics match current behavior
-- Task file movement (active/ to completed/)
+- `rex task list --type core --status in_progress --priority P1` filters correctly
+- `rex task stats` shows counts by type, status, priority (from DB)
+- Task file movement (active/ to completed/) updates DB
+- Fast queries even with 100+ tasks
 
 **Estimated Effort:** 2 weeks
 
 ### Phase 4: Plan Support and Polish
 
 **Scope:**
-- Implement `rex plan create` and `rex plan update`
+- Implement `rex plan create` and `rex plan update` (with DB support)
 - Add `rex version` command
 - Add `rex help` with examples
+- Add `rex db info` to show DB stats (size, record counts, last rebuild)
 - Configuration file support (.rex.yaml) for customization
 - Error messages and validation
 - Cross-platform binary releases (Linux, macOS, Windows)
+- DB migration system for schema changes
 
 **Success Criteria:**
 - All four documentation types supported (ADR, RFC, Task, Plan)
 - Helpful error messages and command documentation
 - Binary releases for major platforms
 - Migration guide for existing repos
+- DB schema versioning works across rex versions
 
 **Estimated Effort:** 1.5 weeks
 
@@ -263,6 +322,164 @@ rex (Go CLI Binary)
 
 **Estimated Effort:** 1 week
 
+## Database Schema
+
+Rex uses SQLite (modernc.org/sqlite) as a query cache. The database is automatically generated and rebuilt from markdown files, so it can be safely deleted and regenerated at any time.
+
+**Schema Overview:**
+
+```sql
+-- ADRs Table
+CREATE TABLE adrs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number INTEGER NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    status TEXT NOT NULL,
+    date TEXT NOT NULL,
+    file_path TEXT NOT NULL UNIQUE,
+    content TEXT,  -- Full markdown content for search
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_adrs_status ON adrs(status);
+CREATE INDEX idx_adrs_number ON adrs(number);
+
+-- RFCs Table
+CREATE TABLE rfcs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number INTEGER NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    status TEXT NOT NULL,
+    author TEXT,
+    created_date TEXT NOT NULL,
+    updated_date TEXT NOT NULL,
+    file_path TEXT NOT NULL UNIQUE,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_rfcs_status ON rfcs(status);
+CREATE INDEX idx_rfcs_number ON rfcs(number);
+
+-- Tasks Table
+CREATE TABLE tasks (
+    id TEXT PRIMARY KEY,  -- TASK-001 format
+    title TEXT NOT NULL,
+    type TEXT NOT NULL,
+    status TEXT NOT NULL,
+    priority TEXT NOT NULL,
+    estimated_hours REAL,
+    actual_hours REAL,
+    started_date TEXT,
+    completed_date TEXT,
+    assignee TEXT,
+    phase INTEGER,
+    file_path TEXT NOT NULL UNIQUE,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_tasks_type ON tasks(type);
+CREATE INDEX idx_tasks_status ON tasks(status);
+CREATE INDEX idx_tasks_priority ON tasks(priority);
+CREATE INDEX idx_tasks_type_status ON tasks(type, status);
+
+-- Task Relationships (for blocked_by, blocks, related_to)
+CREATE TABLE task_relationships (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_id TEXT NOT NULL,
+    related_task_id TEXT NOT NULL,
+    relationship_type TEXT NOT NULL,  -- 'blocked_by', 'blocks', 'related_to'
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY (related_task_id) REFERENCES tasks(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_task_rel_task ON task_relationships(task_id);
+CREATE INDEX idx_task_rel_type ON task_relationships(relationship_type);
+
+-- Task Tags (many-to-many)
+CREATE TABLE task_tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_id TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_task_tags_task ON task_tags(task_id);
+CREATE INDEX idx_task_tags_tag ON task_tags(tag);
+
+-- Plans Table
+CREATE TABLE plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number INTEGER NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_date TEXT NOT NULL,
+    file_path TEXT NOT NULL UNIQUE,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_plans_status ON plans(status);
+
+-- Metadata Table (for DB versioning and rebuild tracking)
+CREATE TABLE metadata (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Store DB schema version for migrations
+INSERT INTO metadata (key, value) VALUES ('schema_version', '1');
+INSERT INTO metadata (key, value) VALUES ('last_rebuild', datetime('now'));
+```
+
+**Query Examples:**
+
+```sql
+-- Fast task filtering
+SELECT * FROM tasks
+WHERE type = 'core'
+  AND status = 'in_progress'
+  AND priority IN ('P0', 'P1')
+ORDER BY priority, created_at;
+
+-- Task statistics
+SELECT type, status, COUNT(*) as count, SUM(estimated_hours) as total_hours
+FROM tasks
+GROUP BY type, status;
+
+-- Find blocked tasks with their blockers
+SELECT t.id, t.title, GROUP_CONCAT(tr.related_task_id) as blocked_by
+FROM tasks t
+JOIN task_relationships tr ON t.id = tr.task_id
+WHERE tr.relationship_type = 'blocked_by'
+GROUP BY t.id;
+
+-- Full-text search (if needed)
+SELECT * FROM tasks WHERE content LIKE '%keyword%';
+```
+
+**Database Lifecycle:**
+
+1. **Initial creation**: `rex init` or first command creates `.rex.db`
+2. **Auto-rebuild**: Any command checks if DB is stale/missing and rebuilds
+3. **Manual rebuild**: `rex rebuild` forces a full rebuild from docs/
+4. **Stale detection**: Compare DB `last_rebuild` timestamp with file mtimes
+5. **Migration**: On schema changes, rex auto-migrates or rebuilds
+
+**Benefits:**
+
+- **Fast queries**: No need to parse 100+ markdown files for `rex task list`
+- **Complex filtering**: SQL WHERE clauses for multi-field filtering
+- **Aggregations**: `rex task stats` runs SQL GROUP BY queries
+- **Relationships**: Easy to query task dependencies via JOIN
+- **Search**: Full-text search across all content if needed
+
 ## Migration Strategy
 
 **For existing repositories using bash scripts:**
@@ -272,24 +489,37 @@ rex (Go CLI Binary)
    go install github.com/donaldgifford/rex@latest
    ```
 
-2. **Verify existing docs/ structure is compatible**
+2. **Build local database from existing markdown files**
    ```bash
-   rex validate  # New command to check structure
+   rex rebuild  # Scans docs/ and populates .rex.db
    ```
 
-3. **Remove old tooling**
+3. **Verify everything works**
+   ```bash
+   rex adr list  # Should show existing ADRs
+   rex task list  # Should show existing tasks
+   ```
+
+4. **Remove old tooling**
    ```bash
    rm -rf tools/makefiles tools/docs tools/scripts
    git rm Makefile  # If only used for rex
    ```
 
-4. **Update workflows**
+5. **Add .rex.db to .gitignore**
+   ```bash
+   echo ".rex.db" >> .gitignore
+   git add .gitignore
+   ```
+
+6. **Update workflows**
    - Replace `make adr "Title"` with `rex adr create "Title"`
    - Replace `make rfc "Title"` with `rex rfc create "Title"`
    - Replace `make task` with `rex task create`
-   - Replace `make task-update` with `rex task update`
+   - Replace `make task-list TYPE=core` with `rex task list --type core`
+   - Replace `make task-stats` with `rex task stats`
 
-5. **Commit changes**
+7. **Commit changes**
    ```bash
    git add -A
    git commit -m "Migrate to rex CLI tool"
@@ -406,8 +636,10 @@ rex (Go CLI Binary)
 1. Should rex support custom templates via local .rex/templates/ directory or only through .rex.yaml overrides?
 2. Should rex generate HTML output (like the old ADR feature) or remain markdown-only?
 3. Should rex support exporting documentation to other formats (PDF, Confluence, etc.)?
-4. Should rex integrate with git hooks to auto-update READMEs on commit?
+4. Should rex integrate with git hooks to auto-update READMEs and .rex.db on commit?
 5. Should rex support task time tracking with timers (`rex task start`, `rex task stop`)?
+6. Should rex support SQLite FTS5 (full-text search) for content search across all docs?
+7. Should .rex.db location be configurable via .rex.yaml or always in repo root?
 
 ## References
 
@@ -415,6 +647,8 @@ rex (Go CLI Binary)
 - Current makefiles: `tools/makefiles/`
 - Cobra CLI framework: https://github.com/spf13/cobra
 - Go embed package: https://pkg.go.dev/embed
+- SQLite (pure Go): https://gitlab.com/cznic/sqlite (modernc.org/sqlite)
+- YAML parser: https://github.com/go-yaml/yaml
 - GoReleaser: https://goreleaser.com/
 
 ## Appendix: Example Workflows
@@ -437,11 +671,16 @@ cd /path/to/repo
 rex adr create "Use PostgreSQL for Data Storage"
 # Created: docs/adr/0015-use-postgresql-for-data-storage.md
 # Updated: docs/adr/README.md
+# Updated: .rex.db (cache)
 git add docs/adr
 git commit -m "Add ADR for PostgreSQL decision"
+
+# Query ADRs from DB
+rex adr list --status Proposed
+# 0015 | Use PostgreSQL for Data Storage | Proposed | 2025-11-05
 ```
 
-**Improvement:** Single command auto-updates README; no separate update step required.
+**Improvement:** Single command auto-updates README and DB; no separate update step required. Fast queries from SQLite cache.
 
 ### Workflow 2: Initializing a New Repository
 
@@ -472,10 +711,14 @@ rex init
 # Created: docs/tasks/
 # Created: docs/plans/
 # Created: .rex.yaml (optional config)
+# Created: .rex.db (SQLite cache)
 # ✓ Repository initialized for documentation management
+
+# Add .rex.db to .gitignore
+echo ".rex.db" >> .gitignore
 ```
 
-**Improvement:** Single command replaces 10+ minutes of manual setup.
+**Improvement:** Single command replaces 10+ minutes of manual setup. SQLite cache created automatically.
 
 ### Workflow 3: Task Management
 
@@ -498,13 +741,26 @@ rex task create
 # Interactive prompts...
 # Created: docs/tasks/core/active/TASK-042-implement-api.md
 # Updated: docs/tasks/README.md
-rex task list --type core --status in_progress
-# Shows filtered tasks
+# Updated: .rex.db
+
+# Fast queries from SQLite
+rex task list --type core --status in_progress --priority P1
+# TASK-042 | Implement API | core | in_progress | P1 | 8h
+
+# Aggregated statistics
+rex task stats
+# Type: core (15 tasks, 120 hours estimated)
+# Type: plugin (8 tasks, 64 hours estimated)
+# Status: in_progress (5 tasks)
+# Status: planned (18 tasks)
+
+# Complete task
 rex task complete TASK-042
-# Marks complete, moves file, updates READMEs
+# Updated: docs/tasks/core/completed/TASK-042-implement-api.md
+# Updated: .rex.db
 ```
 
-**Improvement:** READMEs auto-update; cleaner flag syntax for filtering.
+**Improvement:** READMEs auto-update; cleaner flag syntax; fast DB queries even with 100+ tasks; powerful statistics.
 
 ---
 
