@@ -21,8 +21,7 @@ GOIMPORTS_LOCAL_ARG := -local github.com/donaldgifford
 ## Build Directories
 
 BIN_DIR        := bin
-PLUGIN_BIN_DIR := $(BIN_DIR)/plugins
-BUILD_DIR      := $(BIN_DIR)
+BUILD_DIR      := ./build/$(BIN_DIR)
 
 ## Version Information
 

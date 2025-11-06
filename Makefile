@@ -4,11 +4,8 @@
 # This root Makefile coordinates domain-specific makefiles:
 #   - makefiles/common.mk    - Shared variables and patterns
 #   - makefiles/go.mk        - Go backend targets
-#   - makefiles/ui.mk        - Web UI targets
-#   - makefiles/docker.mk    - Docker and LocalStack
 #   - makefiles/db.mk        - Database migrations
 #   - makefiles/docs.mk      - API docs and task management
-#   - makefiles/demo.mk      - E2E demos and MVP testing
 #
 # All domain targets are defined in their respective makefiles.
 # This file only contains orchestration targets that coordinate across domains.
@@ -21,7 +18,6 @@
 include tools/makefiles/common.mk
 include tools/makefiles/go.mk
 include tools/makefiles/docs.mk
-include tools/makefiles/demo.mk
 
 ######################
 ##@ Orchestration

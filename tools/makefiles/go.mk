@@ -11,7 +11,15 @@
 
 ## Build Targets
 
-build: build-core build-plugins ## Build everything (core + all plugins)
+build: build-core ## Build everything
+
+
+build-core: ## Build core binaries
+	@ $(MAKE) --no-print-directory log-$@
+	@mkdir -p $(BUILD_DIR)
+	@go build -o $(BUILD_DIR)/rex main.go internal/ cmd/
+	@echo "✓ Core binaries built"
+
 
 ## Testing
 

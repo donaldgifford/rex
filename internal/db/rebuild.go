@@ -61,7 +61,10 @@ func (db *Database) Rebuild(docsDir string) error {
 }
 
 // clearTables removes all existing data from cache tables
-func (db *Database) clearTables(tx interface{ Exec(string, ...interface{}) (interface{}, error) }) error {
+func (db *Database) clearTables(tx interface {
+	Exec(string, ...interface{}) (interface{}, error)
+},
+) error {
 	tables := []string{"task_tags", "task_relationships", "tasks", "adrs", "rfcs", "plans"}
 	for _, table := range tables {
 		if _, err := tx.Exec(fmt.Sprintf("DELETE FROM %s", table)); err != nil {
@@ -74,7 +77,8 @@ func (db *Database) clearTables(tx interface{ Exec(string, ...interface{}) (inte
 // rebuildADRs scans and imports all ADR markdown files
 func (db *Database) rebuildADRs(tx interface {
 	Exec(string, ...interface{}) (interface{}, error)
-}, adrDir string) error {
+}, adrDir string,
+) error {
 	if _, err := os.Stat(adrDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -103,7 +107,6 @@ func (db *Database) rebuildADRs(tx interface {
 			INSERT INTO adrs (number, title, status, date, file_path, content)
 			VALUES (?, ?, ?, ?, ?, ?)
 		`, adr.Number, adr.Title, adr.Status, adr.Date, path, string(body))
-
 		if err != nil {
 			return fmt.Errorf("insert ADR %s: %w", path, err)
 		}
@@ -115,7 +118,8 @@ func (db *Database) rebuildADRs(tx interface {
 // rebuildRFCs scans and imports all RFC markdown files
 func (db *Database) rebuildRFCs(tx interface {
 	Exec(string, ...interface{}) (interface{}, error)
-}, rfcDir string) error {
+}, rfcDir string,
+) error {
 	if _, err := os.Stat(rfcDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -144,7 +148,6 @@ func (db *Database) rebuildRFCs(tx interface {
 			INSERT INTO rfcs (number, title, status, author, created_date, updated_date, file_path, content)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		`, rfc.Number, rfc.Title, rfc.Status, rfc.Author, rfc.CreatedDate, rfc.UpdatedDate, path, string(body))
-
 		if err != nil {
 			return fmt.Errorf("insert RFC %s: %w", path, err)
 		}
@@ -156,7 +159,8 @@ func (db *Database) rebuildRFCs(tx interface {
 // rebuildTasks scans and imports all Task markdown files
 func (db *Database) rebuildTasks(tx interface {
 	Exec(string, ...interface{}) (interface{}, error)
-}, tasksDir string) error {
+}, tasksDir string,
+) error {
 	if _, err := os.Stat(tasksDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -245,7 +249,8 @@ func (db *Database) rebuildTasks(tx interface {
 // rebuildPlans scans and imports all Plan markdown files
 func (db *Database) rebuildPlans(tx interface {
 	Exec(string, ...interface{}) (interface{}, error)
-}, plansDir string) error {
+}, plansDir string,
+) error {
 	if _, err := os.Stat(plansDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -274,7 +279,6 @@ func (db *Database) rebuildPlans(tx interface {
 			INSERT INTO plans (number, title, status, created_date, file_path, content)
 			VALUES (?, ?, ?, ?, ?, ?)
 		`, plan.Number, plan.Title, plan.Status, plan.CreatedDate, path, string(body))
-
 		if err != nil {
 			return fmt.Errorf("insert plan %s: %w", path, err)
 		}
