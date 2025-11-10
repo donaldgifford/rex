@@ -34,16 +34,30 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "rex",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Documentation management CLI tool",
+	Long: `Rex is a fast, SQLite-backed documentation management tool.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+Rex helps you manage:
+  • Architecture Decision Records (ADRs)
+  • RFCs (Requests for Comments)
+  • Tasks with relationships and time tracking
+  • Plans and roadmaps
+
+All documents are stored as markdown files with YAML frontmatter,
+and cached in SQLite for lightning-fast queries and filtering.
+
+Common commands:
+  rex adr create "Decision Title"       # Create an ADR
+  rex rfc create "Proposal Title"       # Create an RFC
+  rex task create                       # Create a task (interactive)
+  rex task list --type core --status in_progress
+  rex plan create "Q4 Roadmap"         # Create a plan
+  rex rebuild                           # Rebuild cache from markdown
+
+For help with a specific command:
+  rex <command> --help
+
+Documentation: https://github.com/donaldgifford/rex`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -58,15 +72,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
+	// Global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rex.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -5,24 +5,30 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // planCmd represents the plan command
 var planCmd = &cobra.Command{
 	Use:   "plan",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Manage plans and roadmaps",
+	Long: `Manage plans and roadmaps for your project.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("plan called")
-	},
+Plans are useful for documenting:
+- Project roadmaps
+- Sprint plans
+- Release plans
+- Quarterly objectives
+
+Available subcommands:
+  create  - Create a new plan
+  list    - List all plans
+  update  - Update plan README files
+
+Examples:
+  rex plan create "Q4 2025 Roadmap"
+  rex plan list --status active
+  rex plan update`,
 }
 
 func init() {

@@ -4,6 +4,11 @@
 
 set -e
 
+# Show deprecation notice
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../../../tools/DEPRECATED.sh" 2>/dev/null || true
+show_deprecation_notice "task-create.sh" "rex task create" 2>/dev/null || true
+
 # Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'

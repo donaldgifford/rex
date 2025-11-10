@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -47,24 +48,21 @@ func (db *Database) Rebuild(docsDir string) error {
 		return fmt.Errorf("rebuild plans: %w", err)
 	}
 
-	// Update last rebuild timestamp
-	if err := db.SetLastRebuild(); err != nil {
-		return fmt.Errorf("set last rebuild: %w", err)
-	}
-
 	// Commit transaction
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("commit transaction: %w", err)
+	}
+
+	// Update last rebuild timestamp (after transaction commits)
+	if err := db.SetLastRebuild(); err != nil {
+		return fmt.Errorf("set last rebuild: %w", err)
 	}
 
 	return nil
 }
 
 // clearTables removes all existing data from cache tables
-func (db *Database) clearTables(tx interface {
-	Exec(string, ...interface{}) (interface{}, error)
-},
-) error {
+func (db *Database) clearTables(tx *sql.Tx) error {
 	tables := []string{"task_tags", "task_relationships", "tasks", "adrs", "rfcs", "plans"}
 	for _, table := range tables {
 		if _, err := tx.Exec(fmt.Sprintf("DELETE FROM %s", table)); err != nil {
@@ -75,10 +73,7 @@ func (db *Database) clearTables(tx interface {
 }
 
 // rebuildADRs scans and imports all ADR markdown files
-func (db *Database) rebuildADRs(tx interface {
-	Exec(string, ...interface{}) (interface{}, error)
-}, adrDir string,
-) error {
+func (db *Database) rebuildADRs(tx *sql.Tx, adrDir string) error {
 	if _, err := os.Stat(adrDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -116,10 +111,7 @@ func (db *Database) rebuildADRs(tx interface {
 }
 
 // rebuildRFCs scans and imports all RFC markdown files
-func (db *Database) rebuildRFCs(tx interface {
-	Exec(string, ...interface{}) (interface{}, error)
-}, rfcDir string,
-) error {
+func (db *Database) rebuildRFCs(tx *sql.Tx, rfcDir string) error {
 	if _, err := os.Stat(rfcDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -157,10 +149,7 @@ func (db *Database) rebuildRFCs(tx interface {
 }
 
 // rebuildTasks scans and imports all Task markdown files
-func (db *Database) rebuildTasks(tx interface {
-	Exec(string, ...interface{}) (interface{}, error)
-}, tasksDir string,
-) error {
+func (db *Database) rebuildTasks(tx *sql.Tx, tasksDir string) error {
 	if _, err := os.Stat(tasksDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}
@@ -247,10 +236,7 @@ func (db *Database) rebuildTasks(tx interface {
 }
 
 // rebuildPlans scans and imports all Plan markdown files
-func (db *Database) rebuildPlans(tx interface {
-	Exec(string, ...interface{}) (interface{}, error)
-}, plansDir string,
-) error {
+func (db *Database) rebuildPlans(tx *sql.Tx, plansDir string) error {
 	if _, err := os.Stat(plansDir); os.IsNotExist(err) {
 		return nil // Directory doesn't exist, skip
 	}

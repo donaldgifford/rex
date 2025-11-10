@@ -7,6 +7,11 @@
 
 set -e
 
+# Show deprecation notice
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../DEPRECATED.sh" 2>/dev/null || true
+show_deprecation_notice "create-rfc.sh" "rex rfc create \"Your RFC Title\"" 2>/dev/null || true
+
 TITLE="$1"
 
 # Validate input

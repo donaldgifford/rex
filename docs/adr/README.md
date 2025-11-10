@@ -30,8 +30,13 @@ This will create a new ADR file with an auto-incremented ID.
 <!-- BEGIN AUTO-GENERATED -->
 ## All ADRs
 
-| ID | Title | Status | Link |
-|----|-------|--------|------|
-| 0001 | Rex 1.0 | Proposed | [0001-rex-10.md](0001-rex-10.md) |
+**Total**: 1 ADRs
+
+**By Status**:
+- 📝 draft: 1
+
+| Number | Status | Title | Date |
+|--------|--------|-------|------|
+| 0001 | 📝 draft | [Test ADR for Update Command](0001-test-adr-for-update-command.md) | 2025-11-10 |
 
 <!-- END AUTO-GENERATED -->

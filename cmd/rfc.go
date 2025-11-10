@@ -5,24 +5,27 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // rfcCmd represents the rfc command
 var rfcCmd = &cobra.Command{
 	Use:   "rfc",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Manage RFCs (Requests for Comments)",
+	Long: `Manage RFCs (Requests for Comments) for your project.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rfc called")
-	},
+RFCs document proposed changes, features, or architectural decisions that
+require discussion and approval.
+
+Available subcommands:
+  create  - Create a new RFC
+  list    - List all RFCs
+  update  - Update RFC README files
+
+Examples:
+  rex rfc create "Add Plugin System"
+  rex rfc list --status draft
+  rex rfc update`,
 }
 
 func init() {

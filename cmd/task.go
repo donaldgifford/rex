@@ -5,24 +5,29 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // taskCmd represents the task command
 var taskCmd = &cobra.Command{
 	Use:   "task",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Manage tasks",
+	Long: `Manage tasks for your project.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("task called")
-	},
+Tasks are stored in markdown files with YAML frontmatter in docs/tasks/.
+The SQLite cache provides fast filtering and querying.
+
+Available subcommands:
+  create   - Create a new task with interactive prompts
+  list     - List tasks with optional filtering
+  complete - Mark a task as completed and move to completed/
+  stats    - Show task statistics
+
+Examples:
+  rex task create
+  rex task list --type core --status in_progress
+  rex task complete TASK-001
+  rex task stats`,
 }
 
 func init() {
